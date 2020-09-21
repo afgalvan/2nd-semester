@@ -6,23 +6,20 @@
     #include <windows.h>
     #define OS "Windows"
     #define clean "cls"
-    #define bold "" 
     #define green "color A"
-    #define red "color C"
-    #define white_blue "color 1F"
-    #define reset "color 7"
     #define stop getch()
 #elif linux
     #include <ncurses.h> // CLI Window manipulation
     #define OS "Linux"
     #define clean "clear"
-    #define bold "echo \"\e[1m\""
     #define green "echo -e \"\e[92m\""
-    #define red "echo \"\e[91m\""
-    #define white_blue "echo \"\e[97;21;104m\""
-    #define reset "echo \"\e[0m\""
     #define stop fflush(stdin);getchar()
 #endif
+
+#define white "\e[0;97m"
+#define white_blue "\e[97;21;104m"
+#define red "\e[1;91m"
+#define reset "\e[0;0m"
 
 int height, width, centered;
 
@@ -64,7 +61,7 @@ void center_print(char text[], int Y)
 void repeat_program(int main_function(), int Y)
 {
     char choice[100], separator[] = {"-----------------------------"};
-    int choice_int, X;
+    int choice_int, X, defect_height = Y;
     
     X = (width - strlen(separator)) / 2;
     
@@ -88,8 +85,8 @@ void repeat_program(int main_function(), int Y)
     }
     else if (choice_int != 2)
     {
-        system(clean);
-        repeat_program(main_function, Y);
+        gotoxy(X+1, Y); printf("                        ");
+        repeat_program(main_function, defect_height);
     }
 }
 
@@ -100,11 +97,10 @@ void error_identifier(char errorID[], int x, int y)
 
 void error_msg(char error_text[], int Y)
 {
-    system(red);
-    system(bold);
+    printf(red);
     center_print(error_text, Y);
-    stop;
-    system(white_blue);
+    printf(white);
+    /* printf(white_blue); */
 }
 
 bool only_numbers(char input[], char numbers_range)
