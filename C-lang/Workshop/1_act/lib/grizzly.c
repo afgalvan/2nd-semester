@@ -53,9 +53,7 @@ void gotoxy(int x, int y)
 
 int center_this(char content[])
 {
-    int title_width;
-
-    title_width = strlen(content);
+    int title_width = strlen(content);
     centered = (width - title_width) / 2;
     return centered;
 }
