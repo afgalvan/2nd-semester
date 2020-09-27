@@ -15,7 +15,7 @@ int main()
    set_window();
    program_header();
    ask_number();
-   repeat_program(main, 22);
+   repeat_program(main, "Desea repetir el programa", 22);
    return 0;
 }
 

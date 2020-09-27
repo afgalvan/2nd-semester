@@ -65,7 +65,7 @@ void center_print(char text[], int Y)
     printf("%s\n", text);
 }
 
-void repeat_program(int main_function(), int Y)
+void repeat_program(int main_function(), char message[], int Y)
 {
     char choice[100], separator[] = {"-----------------------------"};
     int choice_int, X, defect_height = Y;
@@ -75,27 +75,17 @@ void repeat_program(int main_function(), int Y)
     gotoxy(X - 1, Y);
     printf("%s", separator);
     Y++;
-    if (OS == "Linux")
-    {
-        gotoxy(X, Y);
-        printf("¿Desea repetir el programa?");
+    if (OS == "Linux") {
+        gotoxy(X, Y); printf("¿%s?", message);
         Y++;
     }
-    else
-    {
-        gotoxy(X, Y);
-        printf("%cDesea repetir el programa?", 168);
+    else {
+        gotoxy(X, Y); printf("%c%s?", 168, message);
         Y++;
     }
-    gotoxy(X, Y);
-    printf("[1] Si.");
-    Y++;
-    gotoxy(X, Y);
-    printf("[2] No.");
-    Y += 2;
-    gotoxy(X, Y);
-    printf("> ");
-    scanf("%s", choice);
+    gotoxy(X, Y); printf("[1] Si."); Y++;
+    gotoxy(X, Y); printf("[2] No."); Y += 2;
+    gotoxy(X, Y); printf("> "); scanf("%s", choice);
     fflush(stdin);
 
     choice_int = atoi(choice);
@@ -106,9 +96,8 @@ void repeat_program(int main_function(), int Y)
     }
     else if (choice_int != 2)
     {
-        gotoxy(X + 1, Y);
-        printf("                        ");
-        repeat_program(main_function, defect_height);
+        gotoxy(X+1, Y); printf("                        ");
+        repeat_program(main_function, message, defect_height);
     }
 }
 

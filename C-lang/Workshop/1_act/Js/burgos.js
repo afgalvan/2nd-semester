@@ -2,6 +2,8 @@ const prompt = require('prompt-sync')();
 
 const gotoxy = function(x, y)
 {
+   x = Math.round(x);
+   y = Math.round(y);
    process.stdout.write(`\u001b[${y};${x}H`);   
 }
 

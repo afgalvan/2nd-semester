@@ -15,7 +15,7 @@ int main()
     system(clean);
     center_print("FIBONACCI", 4);
     ask_limit();
-    repeat_program(main, 20);
+    repeat_program(main, "Desea repetir el programa", 20);
     return 0;
 }
 

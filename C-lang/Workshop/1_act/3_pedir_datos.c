@@ -11,7 +11,7 @@ int main()
 {
    set_window();
    menu();
-   repeat_program(main, 26);
+   repeat_program(main,"Desea continuar", 26);
    system(reset);
    system(clean);
    return 0;
