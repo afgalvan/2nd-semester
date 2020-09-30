@@ -23,7 +23,7 @@ void ask_limit()
 {
     int i, range_int;
     int center = title_align();
-    char range[100];
+    char range[1000];
     bool is_number;
 
     do
@@ -51,13 +51,13 @@ void ask_limit()
 
 void fibonacci_gen(int limit)
 {
-    unsigned long x, y;
+    unsigned long long x, y;
     double PHI = (1 + pow(5, 0.5)) / 2;
     printf("\n");
     for (x = 0; x < limit; x++)
     {
         y = round((pow(PHI, x) - (pow(1 - PHI, x))) / pow(5, 0.5));
-        printf("%lu", y);
+        printf("%llu", y);
         if (x < limit - 1)
             printf(", ");
         else

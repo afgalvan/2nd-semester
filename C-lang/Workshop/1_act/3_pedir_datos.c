@@ -81,8 +81,7 @@ void ask_numbers(char numeric_data[], int height)
       
       gotoxy(subsection + 13, height); scanf("%s", numeric_data);
       is_number = only_numbers(numeric_data, 'p');
-      if (!is_number)
-         error_msg("Error. Valores invalidos", 15);
+      error_msg("Error. Valores invalidos", 15);
    } while (!is_number);
    center_print("                          ", 15);
    scanf("%c", &nl);

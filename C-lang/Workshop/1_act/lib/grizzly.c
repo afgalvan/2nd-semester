@@ -31,6 +31,16 @@ int title_align()
     return centered;
 }
 
+void paint_window()
+{
+   printf(white_blue);
+   if (OS == "Windows")
+      system("color F1");
+   else
+      printf(clrscr);
+   system(clean);
+}
+
 void set_window()
 {
 #if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64) || defined(NT_)
