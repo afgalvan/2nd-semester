@@ -1,178 +1,156 @@
-#include <stdio.h>   // The C standard library for in and out
-#include <string.h>  // C library for strings managament
-#include <stdbool.h> // C library for boolean operations
-#include <stdlib.h>  // C standard library for main functions
-#include <ctype.h>   // Varible type manipulation
+#include <iostream>  // C++ standard library
+#include <string.h>  // C library for better string management 
+//Microsoft libraries
+#include <conio.h>
+#include <windows.h> // Library for window manipulation
 
-#if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64) || defined(NT_)
-//Group Windows 32-bits and 64-bits
-    #include <conio.h>
-    #include <windows.h>
-    #define OS "Windows"
-    #define clean "cls"
-    #define stop getch()
-#elif linux
-    #include <ncurses.h> // CLI Window manipulation
-    #define OS "Linux"
-    #define clean "clear"
-    #define stop fflush(stdin);getchar()
-#endif
-
-#define clrscr "\e[1;1H\e[2J"
 #define white "\e[1;97m"
 #define red "\e[1;91m"
-#define reset "\e[0;0m"
 #define white_blue "\e[0;34;107m"
 
-int height, width, centered;
+void menu();
+void ask_user(char user_input[], char var_type, int line);
+void set_window();
+void paint_window();
+void gotoxy(int x, int y);
+int center_this(std::string content);
+void center_printf(std::string text, int Y);
+bool check_value(std::string input, char type);
+void error_msg(std::string error_text, int Y);
+void repeat_program(int main_function(), int static_height);
 
-int title_align()
+int width, center_position, subsection;
+
+int main()
 {
-    return centered;
+    set_window();
+    menu();
+    // getch();
+    repeat_program(main, 7);
+    return 0;
 }
 
-void paint_window()
+void menu()
 {
-   printf(white_blue);
-   if (OS == "Windows")
-      system("color F1");
-   else
-      printf(clrscr);
-   system(clean);
+    char user_dni[35], name[35];
+
+    paint_window();
+    center_printf("PARCIAL", 2);
+    subsection = center_position * 0.9;
+
+    gotoxy(subsection, 4);
+    std::cout << "CEDULA: ";
+    gotoxy(subsection, 5);
+    std::cout << "NOMBRE: ";
+
+    ask_user(user_dni, 'n', 4);
+    ask_user(name, 'l', 5);
+}
+
+void ask_user(char user_input[], char var_type, int line)
+{
+    bool is_valid;
+
+    do
+    {
+        gotoxy(subsection+8, line);
+        std::cout << "                                       ";
+
+        gotoxy(subsection+8, line);
+        std::cin.getline(user_input, 35, '\n');
+        is_valid = check_value(user_input, var_type);
+
+        error_msg("Error. valores invalidos.", 7);
+    } while (!is_valid);
+    center_printf("                                     ", 7);
 }
 
 void set_window()
 {
-#if defined(WIN32) || defined(_WIN32) || defined(WIN64) || defined(_WIN64) || defined(NT_)
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    HWND hwnd = GetConsoleWindow();
+    if( hwnd != NULL ) ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+
     int ret;
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
     ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-    if (ret)
+    if(ret)
         width = csbi.dwSize.X;
-#else
-    initscr();
-    getmaxyx(stdscr, height, width);
-    endwin();
-#endif
+}
+
+void paint_window()
+{
+    std::cout << white_blue;
+    system("color F1");
+    system("cls");
 }
 
 void gotoxy(int x, int y)
 {
-    printf("%c[%d;%df", 0x1B, y, x);
+    COORD coordinates;
+    coordinates.X = x;
+    coordinates.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coordinates);
 }
 
-int center_this(char content[])
+int center_this(std::string content)
 {
-    int title_width = strlen(content);
-    centered = (width - title_width) / 2;
-    return centered;
+    int title_width = content.length();
+    center_position = (width - title_width) / 2;
+    return center_position;
 }
 
-void center_print(char text[], int Y)
+void center_printf(std::string text, int Y)
 {
-    center_this(text);
-    gotoxy(centered, Y);
-    printf("%s\n", text);
+    int x_position = center_this(text);
+    gotoxy(x_position, Y);
+    std::cout << text;
 }
 
-void repeat_program(int main_function(), char message[], int Y)
+bool check_value(std::string input, char type)
 {
-    char choice[100], separator[] = {"-----------------------------"};
-    int choice_int, X, defect_height = Y;
+    int i;
+
+    for(i = 0; i < input.length(); i++)
+        if(!isdigit(input[i]) && type == 'n')
+            return false;
+        else if(isdigit(input[i]) && type == 'l')
+            return false;
+    return true;
+}
+
+void error_msg(std::string error_text, int Y)
+{
+    std::cout << red;
+    center_printf(error_text, Y);
+    std::cout << white;
+    std::cout << white_blue;
+}
+
+void repeat_program(int main_function(), int static_height)
+{
+    std::string choice;
+    char separator[] = {"-----------------------------"};
+    int X, Y = static_height;
 
     X = (width - strlen(separator)) / 2;
-
-    gotoxy(X - 1, Y);
-    printf("%s", separator);
+    
+    // paint_window();
+    gotoxy(X - 1, Y); std::cout << separator;
     Y++;
-    if (OS == "Linux") {
-        gotoxy(X, Y); printf("¿%s?", message);
-        Y++;
-    }
-    else {
-        gotoxy(X, Y); printf("%c%s?", 168, message);
-        Y++;
-    }
-    gotoxy(X, Y); printf("[1] Si."); Y++;
-    gotoxy(X, Y); printf("[2] No."); Y += 2;
-    gotoxy(X, Y); printf("> "); scanf("%s", choice);
-    fflush(stdin);
-
-    choice_int = atoi(choice);
-
-    if (choice_int == 1)
+    gotoxy(X, Y); std::cout << char(168) << "Desea repetir el programa?";
+    Y++;
+    gotoxy(X, Y); std::cout << "[1] Si.";
+    Y++;
+    gotoxy(X, Y); std::cout << "[2] No.";
+    Y += 2;
+    do
     {
+        gotoxy(X + 1, Y);
+        // std::cout << "                                  ";
+        gotoxy(X, Y); std::cout << "> ";
+        choice = getche();
+    } while(choice != "2" || choice == "1");
+
+    if(choice == "1")
         main_function();
-    }
-    else if (choice_int != 2)
-    {
-        gotoxy(X+1, Y); printf("                        ");
-        repeat_program(main_function, message, defect_height);
-    }
-}
-
-void error_identifier(char errorID[], int x, int y)
-{
-    gotoxy(x, y);
-    printf("\nEn \"%s\".\n", errorID);
-}
-
-void error_msg(char error_text[], int Y)
-{
-    printf(red);
-    center_print(error_text, Y);
-    printf(white);
-    printf(white_blue);
-}
-
-bool only_numbers(char input[], char numbers_range)
-{
-    bool invalid_input;
-    int i;
-
-    invalid_input = false;
-
-    for (i = 0; i < strlen(input); i++)
-    {
-        if (tolower(numbers_range) == 'a')
-        {
-            if (input[0] == '-')
-                continue;
-        }
-        else if (tolower(numbers_range) == 'n')
-        {
-            if (input[0] != '-')
-                return false;
-        }
-        if (!isdigit(input[i]))
-        {
-            invalid_input = true;
-            break;
-        }
-    }
-
-    if (!invalid_input)
-        return true;
-    return false;
-}
-
-bool only_letters(char input[])
-{
-    bool invalid_input;
-    int i;
-
-    invalid_input = false;
-
-    for (i = 0; i < strlen(input); i++)
-    {
-        if (isdigit(input[i]))
-        {
-            invalid_input = true;
-            break;
-        }
-    }
-
-    if (!invalid_input)
-        return true;
-    return false;
 }
