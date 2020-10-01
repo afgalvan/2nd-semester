@@ -4,6 +4,7 @@
 #include "grizzly.c"
 
 int title_align();
+void set_window();
 void paint_window();
 void gotoxy(int x, int y);
 int center_this(char content[]);
