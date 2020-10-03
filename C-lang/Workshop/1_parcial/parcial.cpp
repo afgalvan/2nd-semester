@@ -1,41 +1,45 @@
+// WINDOWS O.S ONLY SCRIPT
 #include <iostream>  // C++ standard library
 #include <string.h>  // C library for better string management 
 //Microsoft libraries
 #include <conio.h>
 #include <windows.h> // Library for window manipulation
 
-#define white "\e[1;97m"
-#define red "\e[1;91m"
-#define white_blue "\e[0;34;107m"
+#define WHITE "\e[1;97m"
+#define RED "\e[1;91m"
+#define BACKGROUND "\e[0;34;107m"
 
-void menu();
-void ask_user(char user_input[], char var_type, int line);
-void set_window();
-void paint_window();
+void Menu();
+void AskUser(char user_input[], char var_type, int line);
+void SetWindow();
+void PaintWindow();
 void gotoxy(int x, int y);
-int center_this(std::string content);
-void center_printf(std::string text, int Y);
-bool check_value(std::string input, char type);
-void error_msg(std::string error_text, int Y);
-void repeat_program(int main_function(), int static_height);
+int CenterThis(std::string content);
+void CenterPrintf(std::string text, int y);
+bool CheckValue(std::string input, char type);
+void ErrorMsg(std::string error_text, int y);
+void RepeatProgram(int main_function(), int static_height);
 
 int width, center_position, subsection;
 
+using namespace std;
+
 int main()
 {
-    set_window();
-    menu();
+    SetWindow();
+    Menu();
     // getch();
-    repeat_program(main, 7);
-    return 0;
+    RepeatProgram(main, 7);
+    return 0; // My compiler requires to return int on main function
 }
 
-void menu()
+void Menu()
 {
+    // Put all functions together
     char user_dni[35], name[35];
 
-    paint_window();
-    center_printf("PARCIAL", 2);
+    PaintWindow();
+    CenterPrintf("PARCIAL", 2);
     subsection = center_position * 0.9;
 
     gotoxy(subsection, 4);
@@ -43,12 +47,13 @@ void menu()
     gotoxy(subsection, 5);
     std::cout << "NOMBRE: ";
 
-    ask_user(user_dni, 'n', 4);
-    ask_user(name, 'l', 5);
+    AskUser(user_dni, 'n', 4);
+    AskUser(name, 'l', 5);
 }
 
-void ask_user(char user_input[], char var_type, int line)
+void AskUser(char user_input[], char var_type, int line)
 {
+    // Validate if user's input it's valid
     bool is_valid;
 
     do
@@ -58,15 +63,16 @@ void ask_user(char user_input[], char var_type, int line)
 
         gotoxy(subsection+8, line);
         std::cin.getline(user_input, 35, '\n');
-        is_valid = check_value(user_input, var_type);
+        is_valid = CheckValue(user_input, var_type);
 
-        error_msg("Error. valores invalidos.", 7);
-    } while (!is_valid);
-    center_printf("                                     ", 7);
+        ErrorMsg("Error. valores invalidos.", 7);
+    } while(!is_valid);
+    CenterPrintf("                                       ", 7);
 }
 
-void set_window()
+void SetWindow()
 {
+    // Prepare the window to fit in the user's screeen an get information from it.
     HWND hwnd = GetConsoleWindow();
     if( hwnd != NULL ) ShowWindow(hwnd, SW_SHOWMAXIMIZED);
 
@@ -77,79 +83,88 @@ void set_window()
         width = csbi.dwSize.X;
 }
 
-void paint_window()
+void PaintWindow()
 {
-    std::cout << white_blue;
+    /* Paint window; white background and blue fore color,
+    using a combination of cmd color code and ANSI escape code*/
+    std::cout << BACKGROUND;
     system("color F1");
     system("cls");
 }
 
 void gotoxy(int x, int y)
 {
+    // Put the cursor in determinate point of the Window.
     COORD coordinates;
     coordinates.X = x;
     coordinates.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),coordinates);
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coordinates);
 }
 
-int center_this(std::string content)
+int CenterThis(std::string content)
 {
+    // Use information given from SetWindow function to center text.
     int title_width = content.length();
     center_position = (width - title_width) / 2;
     return center_position;
 }
 
-void center_printf(std::string text, int Y)
+void CenterPrintf(std::string text, int y)
 {
-    int x_position = center_this(text);
-    gotoxy(x_position, Y);
+    //Automate the process of printing center text.
+    int x_position = CenterThis(text);
+    gotoxy(x_position, y);
     std::cout << text;
 }
 
-bool check_value(std::string input, char type)
+bool CheckValue(std::string input, char type)
 {
+    // Check if a content is numeric or alphabetic.
     int i;
 
     for(i = 0; i < input.length(); i++)
-        if(!isdigit(input[i]) && type == 'n')
+        if(type == 'n' && !isdigit(input[i]))
             return false;
-        else if(isdigit(input[i]) && type == 'l')
+        else if(type == 'l' && isdigit(input[i]))
             return false;
     return true;
 }
 
-void error_msg(std::string error_text, int Y)
+void ErrorMsg(std::string error_text, int y)
 {
-    std::cout << red;
-    center_printf(error_text, Y);
-    std::cout << white;
-    std::cout << white_blue;
+    // Print a red error message to alert the user.
+    std::cout << RED;
+    CenterPrintf(error_text, y);
+    std::cout << WHITE;
+    std::cout << BACKGROUND;
 }
 
-void repeat_program(int main_function(), int static_height)
+void RepeatProgram(int main_function(), int static_height)
 {
+    /* Display a menu to ask if the user wants to continue using the program.
+    Repeat it calling the main function.*/
     std::string choice;
     char separator[] = {"-----------------------------"};
-    int X, Y = static_height;
+    int x, y = static_height;
 
-    X = (width - strlen(separator)) / 2;
+    x = (width - strlen(separator)) / 2;
     
-    // paint_window();
-    gotoxy(X - 1, Y); std::cout << separator;
-    Y++;
-    gotoxy(X, Y); std::cout << char(168) << "Desea repetir el programa?";
-    Y++;
-    gotoxy(X, Y); std::cout << "[1] Si.";
-    Y++;
-    gotoxy(X, Y); std::cout << "[2] No.";
-    Y += 2;
+    // PaintWindow();
+    gotoxy(x - 1, y); std::cout << separator;
+    y++;
+    gotoxy(x, y); std::cout << char(168) << "Desea repetir el programa?";
+    y++;
+    gotoxy(x, y); std::cout << "[1] Si.";
+    y++;
+    gotoxy(x, y); std::cout << "[2] No.";
+    y += 2;
     do
     {
-        gotoxy(X + 1, Y);
+        gotoxy(x + 1, y);
         // std::cout << "                                  ";
-        gotoxy(X, Y); std::cout << "> ";
+        gotoxy(x, y); std::cout << "> ";
         choice = getche();
-    } while(choice != "2" || choice == "1");
+    } while(choice != "2" && choice != "1");
 
     if(choice == "1")
         main_function();

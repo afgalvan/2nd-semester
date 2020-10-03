@@ -78,7 +78,7 @@ void center_print(char text[], int Y)
 void repeat_program(int main_function(), char message[], int Y)
 {
     char choice[100], separator[] = {"-----------------------------"};
-    int choice_int, X, defect_height = Y;
+    int choice_int, X;
 
     X = (width - strlen(separator)) / 2;
 
@@ -95,20 +95,16 @@ void repeat_program(int main_function(), char message[], int Y)
     }
     gotoxy(X, Y); printf("[1] Si."); Y++;
     gotoxy(X, Y); printf("[2] No."); Y += 2;
-    gotoxy(X, Y); printf("> "); scanf("%s", choice);
-    fflush(stdin);
-
-    choice_int = atoi(choice);
-
-    if (choice_int == 1)
-    {
-        main_function();
-    }
-    else if (choice_int != 2)
+    do
     {
         gotoxy(X+1, Y); printf("                        ");
-        repeat_program(main_function, message, defect_height);
-    }
+        gotoxy(X, Y); printf("> "); scanf("%s", choice);
+        choice_int = atoi(choice);
+        fflush(stdin);
+    } while(choice_int != 2 && choice_int != 1);
+
+    if (choice_int == 1)
+        main_function();
 }
 
 void error_identifier(char errorID[], int x, int y)
@@ -127,10 +123,7 @@ void error_msg(char error_text[], int Y)
 
 bool only_numbers(char input[], char numbers_range)
 {
-    bool invalid_input;
     int i;
-
-    invalid_input = false;
 
     for (i = 0; i < strlen(input); i++)
     {
@@ -140,39 +133,20 @@ bool only_numbers(char input[], char numbers_range)
                 continue;
         }
         else if (tolower(numbers_range) == 'n')
-        {
             if (input[0] != '-')
                 return false;
-        }
         if (!isdigit(input[i]))
-        {
-            invalid_input = true;
-            break;
-        }
+            return false;
     }
-
-    if (!invalid_input)
-        return true;
-    return false;
+    return true;
 }
 
 bool only_letters(char input[])
 {
-    bool invalid_input;
     int i;
 
-    invalid_input = false;
-
     for (i = 0; i < strlen(input); i++)
-    {
         if (isdigit(input[i]))
-        {
-            invalid_input = true;
-            break;
-        }
-    }
-
-    if (!invalid_input)
-        return true;
-    return false;
+            return false;
+    return true;
 }
