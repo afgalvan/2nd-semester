@@ -1,10 +1,1 @@
-# 1. Realizar un programa que lea un numero de 4 digitos
-# y determine: Unidades, decenas, centenas, u. de mil.
-# obs: (Solo permitir desde el 1000 hasta el 9999)
-
-# Ej: 3147
-# Unidad: 7
-# Decena: 4
-# Centena: 1
-# U.de mil: 3
-
+from subprocess import call valid = ["I", "X", "L", "D", "V", "M", "C"] translate = [1, 10, 50, 500, 5, 1000, 100] while True: call("clear") print("\t\tNUMEROS ROMANOS.") n = input("\nIngrese un número en romano: ") if n not in valid: print("Valor inválido.") input() continue result = valid.index(n) print("El numero es ", translate[result]) break input("\nJavier Gayrra")
