@@ -58,6 +58,9 @@ dkms.conf
 
 # Exclude .NET assemblies from source
 
+### Vscode ###
+*.vscode
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
