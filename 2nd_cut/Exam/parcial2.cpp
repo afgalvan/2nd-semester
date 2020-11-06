@@ -17,7 +17,7 @@ int DigitsOf(int number);
 int AlingArray(int array[], int size);
 void ArrayTable(int array[], int size);
 void DisplayArray(int array[], int size);
-int SumArray(int array[], int size);
+void SumArray(int array[], int size);
 void BubbleSort(int array[], int size);
 bool CheckValue(std::string input, char type);
 void AskUser(char user_input[], char var_type, int line, int question_len);
@@ -89,8 +89,6 @@ void Menu()
 
 int ArrayManagement(char process, int array[], int size)
 {
-    int total;
-
     switch (process)
     {
     case '1':
@@ -100,7 +98,7 @@ int ArrayManagement(char process, int array[], int size)
         DisplayArray(array, size);
         break;
     case '3':
-        total = SumArray(array, size);
+        SumArray(array, size);
         break;
     case '4':
         BubbleSort(array, size);
@@ -207,7 +205,7 @@ void DisplayArray(int array[], int size)
     getch();
 }
 
-int SumArray(int array[], int size)
+void SumArray(int array[], int size)
 {
     // TODO: Print the result in center
     int i, addition = 0;
@@ -218,7 +216,6 @@ int SumArray(int array[], int size)
 
     for (i = 0; i < size; i++)
         addition += array[i];
-    return addition;
 }
 
 void BubbleSort(int array[], int size)

@@ -115,8 +115,8 @@ void DisplayArray(int array[][6], int rows, int columns)
 
 int main()
 {
-    int array[6][6] = {{1, 1, 10000000, 2}, {1, 2222, 33, 4}, {8, 5, 6, 0}, {11, 1, 3, 777}};
+    int array[6][6] = {{12121, 1, 32, 2}, {1, 2222, 33, 4}, {8, 5, 6, 0}, {11, 1, 3, 777}};
 
-    DisplayArray(array, 2, 4);
+    DisplayArray(array, 4, 5);
     return 0;
 }
