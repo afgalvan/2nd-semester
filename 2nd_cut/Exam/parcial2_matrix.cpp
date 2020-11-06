@@ -11,14 +11,17 @@
 void SplashScreen();
 void Menu();
 std::string MenuChoice(int position_y, std::string allow_this);
-int ArrayManagement(char process, int array[], int size);
-int BuildArray(int array[]);
+void ArrayManagement(char process, int array[][30], int size[]);
+void BuildArray(int array[][30], int size[]);
 int DigitsOf(int number);
-int AlingArray(int array[], int size);
-void ArrayTable(int array[], int size);
-void DisplayArray(int array[], int size);
-int SumArray(int array[], int size);
-void BubbleSort(int array[], int size);
+int AlingArray(int array[][30], int size);
+void LargestInColumn(int list[], int array[][30], int rows, int columns);
+void DelimiterLines(int r, int columns, int lines[]);
+void DownLines(int columns, int lines[]);
+void ArrayTable(int array[][30], int rows, int columns);
+void DisplayArray(int array[][30], int rows, int columns);
+void SumArray(int array[][30], int rows, int columns);
+void BubbleSort(int array[][30], int size);
 bool CheckValue(std::string input, char type);
 void AskUser(char user_input[], char var_type, int line, int question_len);
 bool AllowedInput(std::string allowed, std::string user_input);
@@ -57,10 +60,10 @@ void SplashScreen()
 void Menu()
 {
     // Prompt the main menu to the user.
-    std::string menu_options[] = {"1 - ASIGNAR VALORES AL VECTOR", "2 - CONSULTAR VALORES DEL VECTOR", "3 - SUMAR VECTOR", "4 - ORDENAR VECTOR", "5 - SALIR"};
+    std::string menu_options[] = {"1 - ASIGNAR VALORES A LA MATRIZ", "2 - CONSULTAR VALORES DE LA MATRIZ", "3 - SUMAR MATRIZ", "5 - SALIR"};
     std::string choice;
     int len = sizeof(menu_options) / sizeof(*menu_options);
-    int array[30], array_len = 0;
+    int array[30][30], size[] = {0, 0};
     int h = 9, choice_int;
 
     do
@@ -71,68 +74,72 @@ void Menu()
             SplashScreen();
         system("cls");
         PrintTitle("   ARREGLOS   ", 4);
-        CenterPrint("CREAR Y CONSULTAR ARREGLO UNIDIMENSIONAL", 6);
+        CenterPrint("CREAR Y CONSULTAR ARREGLO BIDIMENSIONAL.", 6);
         BoxIn(menu_options, len, h);
         do
         {
-            choice = MenuChoice(h + len, "12345");
-            CenterPrint("El vector aun no existe", 18);
-        } while (array_len == 0 && (choice == "2" || choice == "3" || choice == "4"));
+            choice = MenuChoice(h + len, "1235");
+            CenterPrint("La matriz aun no existe", 18);
+        } while ((size[0] == 0 || size[1] == 0) && (choice == "2" || choice == "3"));
         CenterPrint("                          ", 18);
 
-        s_screen = 0;
+        s_screen = 0; // Don't show the splash screen anymore
 
         if (choice != "5")
-            array_len = ArrayManagement(choice[0], array, array_len);
+            ArrayManagement(choice[0], array, size);
     } while (choice != "5");
 }
 
-int ArrayManagement(char process, int array[], int size)
+void ArrayManagement(char process, int array[][30], int size[])
 {
-    int total;
-
     switch (process)
     {
     case '1':
-        size = BuildArray(array);
+        BuildArray(array, size);
         break;
     case '2':
-        DisplayArray(array, size);
+        DisplayArray(array, size[0], size[1]);
         break;
     case '3':
-        total = SumArray(array, size);
-        break;
-    case '4':
-        BubbleSort(array, size);
+        SumArray(array, size[0], size[1]);
         break;
     }
-    return size;
 }
 
-int BuildArray(int array[])
+void BuildArray(int array[][30], int size[])
 {
-    char size[30], number[30];
-    int len, i;
+    char rows[30], columns[30], number[30];
+    int r, c;
 
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
-    CenterPrint("CREAR ARREGLO UNIDIMENSIONAL", 6);
+    CenterPrint("CREAR ARREGLO BIDIMENSIONAL.", 6);
 
     gotoxy(center * 0.9, 8);
-    std::cout << "Ingrese el numero de elementos: ";
-    AskUser(size, 'n', 8, 32);
-    std::cout << "                                ";
-    len = atoi(size);
+    std::cout << "Ingrese el numero de filas    : ";
+    gotoxy(center * 0.9, 9);
+    std::cout << "Ingrese el numero de columnas : ";
 
-    for (i = 0; i < len; i++)
+    AskUser(rows, 'n', 8, 32);
+    std::cout << "                                  ";
+    AskUser(columns, 'n', 9, 32);
+    std::cout << "                                  ";
+    gotoxy(center * 0.9, 9);
+    std::cout << "                                           ";
+
+    size[0] = atoi(rows);
+    size[1] = atoi(columns);
+
+    for (r = 0; r < size[0]; r++)
     {
-        gotoxy(center * 0.85, 8);
-        std::cout << "Ingrese un valor para la posicion [" << i << "]: ";
-        AskUser(number, 'n', 8, 35);
-        array[i] = atoi(number);
+        for (c = 0; c < size[1]; c++)
+        {
+            gotoxy(center * 0.85, 8);
+            std::cout << "Ingrese un valor para la posicion [" << r << "][" << c << "]: ";
+            AskUser(number, 'n', 8, 38);
+            array[r][c] = atoi(number);
+        }
     }
-
-    return len;
 }
 
 int DigitsOf(int number)
@@ -148,80 +155,137 @@ int DigitsOf(int number)
     return digits;
 }
 
-int AlingArray(int array[], int size)
+int AlingArray(int array[][30], int size)
 {
     int i, all_digits = 0, table_width;
 
     for (i = 0; i < size; i++)
-    {
-        all_digits += DigitsOf(array[i]);
-    }
+        all_digits += DigitsOf(array[0][i]);
     table_width = all_digits + size + 1;
 
     return (width - table_width) / 2;
 }
 
-void ArrayTable(int array[], int size)
+void LargestInColumn(int list[], int array[][30], int rows, int columns)
 {
-    int i, j, center_table = AlingArray(array, size);
+    int i, j;
+    int max;
 
-    gotoxy(center_table, 8);
-    std::cout << char(218);
-    for (i = 0; i < size; i++)
+    for (i = 0; i < columns; i++)
     {
-        for (j = 0; j < DigitsOf(array[i]); j++)
-            std::cout << char(196);
-        if (i + 1 < size)
-            std::cout << char(194);
+        max = 0;
+        for (j = 0; j < rows; j++)
+            if (DigitsOf(array[j][i]) > max)
+                max = DigitsOf(array[j][i]);
+        list[i] = max;
     }
-    std::cout << char(191);
-
-    gotoxy(center_table, 9);
-    std::cout << char(179);
-    for (i = 0; i < size; i++)
-    {
-        std::cout << array[i];
-        std::cout << char(179);
-    }
-
-    gotoxy(center_table, 10);
-    std::cout << char(192);
-    int x;
-    for (i = 0; i < size; i++)
-    {
-        for (j = 0; j < DigitsOf(array[i]); j++)
-            std::cout << char(196);
-        if (i + 1 < size)
-            std::cout << char(193);
-    }
-    std::cout << char(217);
 }
 
-void DisplayArray(int array[], int size)
+void DelimiterLines(int r, int columns, int lines[])
+{
+    int c;
+    int l;
+
+    if (r == 0)
+        std::cout << char(218);
+    else
+        std::cout << char(195);
+    for (c = 0; c < columns; c++)
+    {
+        for (l = 0; l < lines[c]; l++)
+            std::cout << char(196);
+        if (c + 1 < columns)
+            if (r == 0)
+                std::cout << char(194);
+            else
+                std::cout << char(197);
+    }
+
+    if (r == 0)
+        std::cout << char(191);
+    else
+        std::cout << char(180);
+}
+
+void DownLines(int columns, int lines[])
+{
+    int c, l;
+
+    std::cout << char(192);
+    for (c = 0; c < columns; c++)
+    {
+        for (l = 0; l < lines[c]; l++)
+            std::cout << char(196);
+        if (c + 1 < columns)
+            std::cout << char(193);
+        else
+            std::cout << char(217);
+    }
+}
+
+void ArrayTable(int array[][30], int rows, int columns)
+{
+    int r, c;
+    int a, l, lines[columns];
+    int i, blanks;
+    int center_table = AlingArray(array, columns);
+
+    LargestInColumn(lines, array, rows, columns);
+
+    for (r = 0, a = 0; r < rows; r++, a += 2)
+    {
+        gotoxy(center_table, 8 + a);
+        DelimiterLines(r, columns, lines);
+
+        gotoxy(center_table, 9 + a);
+        std::cout << char(179);
+        for (c = 0; c < columns; c++)
+        {
+            std::cout << array[r][c];
+            blanks = lines[c] - DigitsOf(array[r][c]);
+            for (i = 0; i < blanks; i++)
+                std::cout << " ";
+            std::cout << char(179);
+        }
+
+        gotoxy(center_table, 10 + a);
+        DownLines(columns, lines);
+    }
+}
+
+void DisplayArray(int array[][30], int rows, int columns)
 {
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
-    CenterPrint("MOSTRAR ARREGLO UNIDIMENSIONAL", 6);
-    ArrayTable(array, size);
-    CenterPrint("", 12);
+    CenterPrint("MOSTRAR ARREGLO BIDIMENSIONAL.", 6);
+    ArrayTable(array, rows, columns);
+    CenterPrint("Presione cualquier tecla para continuar... ", 22);
     getch();
 }
 
-int SumArray(int array[], int size)
+void SumArray(int array[][30], int rows, int columns)
 {
     // TODO: Print the result in center
-    int i, addition = 0;
+    int r, c, acum, addition[1][30];
 
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("SUMAR TERMINOS DEL VECTOR", 6);
 
-    for (i = 0; i < size; i++)
-        addition += array[i];
-    return addition;
+    for (c = 0; c < columns; c++)
+    {
+        acum = 0;
+        for (r = 0; r < rows; r++)
+            acum += array[r][c];
+        addition[0][c] = acum;
+    }
+
+    ArrayTable(addition, 1, columns);
+    CenterPrint("Presione cualquier tecla para continuar... ", 22);
+    getch();
 }
 
-void BubbleSort(int array[], int size)
+void BubbleSort(int array[][30], int size)
 {
     // TODO: Use BubbleSort to order the array and add the positiblity of use radix sort
     system("cls");

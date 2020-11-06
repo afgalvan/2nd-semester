@@ -27,23 +27,24 @@ void gotoxy(int x, int y);
 int CenterThis(std::string text);
 void CenterPrint(std::string text, int position_y);
 void PrintTitle(std::string title, int height);
-void BoxIn(std::string options[], int options_quantity, int height);
+void BoxIn(std::string options[], int options_quantity, int height, bool space);
+void BoxInSpace(std::string options[], int options_quantity, int height, int longest);
 int LongestWord(std::string words[], int len);
 void RepeatProgram(int position_y);
 
-int width, center, s_screen = 1;
+int width, center, ss = 1;
 
 int main()
 {
     SetWindow();
     Menu();
+    system("cls");
     RepeatProgram(4);
     return 0;
 }
 
 void SplashScreen()
 {
-    // A Splash Screen to show when the program opens or closes.
     Sleep(190);
     printf("\n\n\n\n\n\n\n\n\t\t\t\t\t\t\t\t     _                        _           "
            "\n\t\t\t\t\t\t\t\t    / \\   _ __ _ __ ___  __ _| | ___  ___ "
@@ -56,8 +57,7 @@ void SplashScreen()
 
 void Menu()
 {
-    // Prompt the main menu to the user.
-    std::string menu_options[] = {"1 - ASIGNAR VALORES AL VECTOR", "2 - CONSULTAR VALORES DEL VECTOR", "3 - SUMAR VECTOR", "4 - ORDENAR VECTOR", "5 - SALIR"};
+    std::string menu_options[] = {"1. ASIGNAR VALORES AL VECTOR", "2. CONSULTAR VALORES DEL VECTOR", "3. SUMAR VECTOR", "4. ORDENAR VECTOR", "5. SALIR"};
     std::string choice;
     int len = sizeof(menu_options) / sizeof(*menu_options);
     int array[30], array_len = 0;
@@ -65,14 +65,14 @@ void Menu()
 
     do
     {
-        system("color 3F");
+        system("color 1F");
         system("cls");
-        if (s_screen)
+        if (ss)
             SplashScreen();
         system("cls");
         PrintTitle("   ARREGLOS   ", 4);
         CenterPrint("CREAR Y CONSULTAR ARREGLO UNIDIMENSIONAL", 6);
-        BoxIn(menu_options, len, h);
+        BoxIn(menu_options, len, h, true);
         do
         {
             choice = MenuChoice(h + len, "12345");
@@ -80,7 +80,7 @@ void Menu()
         } while (array_len == 0 && (choice == "2" || choice == "3" || choice == "4"));
         CenterPrint("                          ", 18);
 
-        s_screen = 0;
+        ss = 0;
 
         if (choice != "5")
             array_len = ArrayManagement(choice[0], array, array_len);
@@ -199,11 +199,11 @@ void ArrayTable(int array[], int size)
 
 void DisplayArray(int array[], int size)
 {
+    // TODO: Print the array with in cells
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("MOSTRAR ARREGLO UNIDIMENSIONAL", 6);
     ArrayTable(array, size);
-    CenterPrint("", 12);
     getch();
 }
 
@@ -274,12 +274,11 @@ void AskUser(char user_input[], char var_type, int line, int question_len)
         std::cout << "                                       ";
 
         gotoxy(center * 0.9 + question_len, line);
-        std::cin >> user_input;
-        // std::cin.getline(user_input, 30, '\n');
+        std::cin.getline(user_input, 30, '\n');
         is_valid = CheckValue(user_input, var_type);
-        CenterPrint("Error. valores invalidos.", 11);
+        CenterPrint("Error. valores invalidos.", 10);
     } while (!is_valid);
-    CenterPrint("                                       ", 11);
+    CenterPrint("                                       ", 10);
 }
 
 bool AllowedInput(std::string allowed, std::string user_input)
@@ -348,7 +347,7 @@ void PrintTitle(std::string title, int height)
         std::cout << char(223);
 }
 
-void BoxIn(std::string options[], int options_quantity, int height)
+void BoxIn(std::string options[], int options_quantity, int height, bool space)
 {
     int i, longest = LongestWord(options, options_quantity);
     center = ((width - longest) / 2) - 2;
@@ -358,6 +357,30 @@ void BoxIn(std::string options[], int options_quantity, int height)
     for (i = 0; i <= longest + 1; i++)
         std::cout << char(196);
     std::cout << char(191);
+
+    if (space)
+        BoxInSpace(options, options_quantity, height, longest);
+    else
+        for (i = 0; i < options_quantity; i++)
+        {
+            gotoxy(center, height + i);
+            std::cout << char(179) << " ";
+            std::cout << options[i];
+            gotoxy(center + longest + 3, height + i);
+            std::cout << char(179);
+        }
+
+    gotoxy(center, height + options_quantity + space);
+    std::cout << char(192);
+    for (i = 0; i <= longest + 1; i++)
+        std::cout << char(196);
+    std::cout << char(217);
+}
+
+void BoxInSpace(std::string options[], int options_quantity, int height, int longest)
+{
+    int i;
+    center = ((width - longest) / 2) - 2;
 
     for (i = 0; i <= options_quantity; i++)
     {
@@ -370,12 +393,6 @@ void BoxIn(std::string options[], int options_quantity, int height)
         gotoxy(center + longest + 3, height + i);
         std::cout << char(179);
     }
-
-    gotoxy(center, height + options_quantity + 1);
-    std::cout << char(192);
-    for (i = 0; i <= longest + 1; i++)
-        std::cout << char(196);
-    std::cout << char(217);
 }
 
 int LongestWord(std::string words[], int len)
@@ -392,12 +409,11 @@ int LongestWord(std::string words[], int len)
 void RepeatProgram(int position_y)
 {
     int position_x;
-    std::string menu_options[] = {"1 - VOLVER AL MENU PRINCIPAL", "2 - SALIR"}, choice;
+    std::string menu_options[] = {"1. VOLVER AL MENU PRINCIPAL", "2. SALIR"}, choice;
 
-    system("cls");
     PrintTitle("   ARREGLOS   ", position_y);
     CenterPrint("ESCOJA UNA OPCION.", position_y + 2);
-    BoxIn(menu_options, 2, position_y + 5);
+    BoxIn(menu_options, 2, position_y + 5, true);
     do
     {
         choice = MenuChoice(position_y + 8, "12");
