@@ -1,1 +1,15 @@
-from subprocess import call valid = ["I", "X", "L", "D", "V", "M", "C"] translate = [1, 10, 50, 500, 5, 1000, 100] while True: call("clear") print("\t\tNUMEROS ROMANOS.") n = input("\nIngrese un número en romano: ") if n not in valid: print("Valor inválido.") input() continue result = valid.index(n) print("El numero es ", translate[result]) break input("\nJavier Gayrra")
+from subprocess import call
+from getpass import getpass
+
+call("cls", shell=True)
+ 
+print("\tDIVISORES")
+
+term = int(input("De que numero desea saber el divisor: "))
+n = 1
+while n < term:
+    if term % n == 0:
+        print(n)
+    n += 1
+    
+getpass("\nHecho por Javier Guerra")
