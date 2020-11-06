@@ -1,0 +1,278 @@
+                         PROGRAMACIÓN DE COMPUTADORES 1
+                     FACULTAD DE INGENIERIA Y TECNOLOGICAS
+                      PROGRAMA DE INGENIERIA DE SISTEMAS
+
+                          EJERCICIOS PARA REVISAR           
+
+
+RECOMENDACIÓN :  COPIE CADA PROGRAMA Y LUEGO PEGELO EN  DEV C++
+
+ 1) Recibir por teclado un numero entero entre 1 y 12 . Generar y mostrar por  
+    pantalla la tabla de multiplicar de dicho número.
+
+                                                  SOLUCION
+
+/****************************************************************
+*                                                               *
+*   CALCULA LA TABLA DE MULTIPLICAR DE UN NUMERO (1 AL 12)      *
+*   DIGITADO DESDE EL TECLADO                                   *
+*                                                               *
+*****************************************************************/
+
+#include <iostream>
+#include <conio.h>
+#include <windows.h>  
+
+using namespace std; 
+
+int gotoxy(USHORT x,USHORT y){                                  
+COORD cp={x,y};                                                 
+SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),cp);   
+}
+
+main() {
+	
+    int J, K, T, F, N ;
+    char OP = 'S';
+    while (OP == 'S')
+          {
+           system("cls");
+           system("color 1F");
+           gotoxy(30,5); cout << "TABLA DE MULTIPLICAR";
+           gotoxy(25,22); cout <<"EL VALOR DEBE SER ENTRE 1 y 12";
+           do {
+              gotoxy(25,8); cout << "Digite el Numero de Calculo : ";
+              gotoxy(55,8); cin >> N ;
+              gotoxy(25,22); cout <<"ERROR.....EL VALOR DEBE SER ENTRE 1 y 12";
+           }  while(( N<= 0 )||( N>12 ));
+           gotoxy(25,22); cout <<"                                           ";
+           system("cls");
+           gotoxy(31,5); cout << "TABLA DE MULTIPLICAR DEL " <<  N;
+           F = 8 ;
+           for (J = 1 ; J <= 12 ; J++)
+               {
+                T = N * J ;
+                gotoxy(34,F); printf(" %2d %3s %2d %3s %2d", J, " * ", N, " = ", T) ;
+                F++ ;
+	        }
+	    do {
+            	gotoxy(31,F+3); cout<< "DESEA CONTINUAR  S/N : " ;
+        	OP = getch();
+        	OP = toupper(OP);
+            }  while ((OP != 'S') && (OP != 'N'));
+			
+	 }
+       
+    }
+
+
+                      =========================================================
+
+
+   2)  Generar y mostrar por pantalla una a una las tablas de multiplicar del  1 al 12
+
+                                            SOLUCION
+
+/****************************************************************
+*                                                               *
+*   CALCULA TODAS LAS TABLAS DE MULTIPLICAR DEl 1 Al 12         *
+*                                                               *
+*****************************************************************/
+
+#include <iostream>
+#include <conio.h>
+#include <windows.h>  
+
+using namespace std; 
+
+int gotoxy(USHORT x,USHORT y){                                  
+COORD cp={x,y};                                                 
+SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),cp);   
+}
+
+main() {
+	
+    int J, K, T, F, N ;
+    char OP = 'S';
+    for ( N = 1 ; ((N <= 12 )&& ( OP == 'S')) ; N++)
+	{
+         system("cls");
+         system("color 1F");
+         gotoxy(31,5); cout << "TABLA DE MULTIPLICAR DEL " <<  N;
+         F = 8 ;
+         for (J = 1 ; J <= 12 ; J++)
+             {
+             T = N * J ;
+             gotoxy(34,F); printf(" %2d %3s %2d %3s %2d", J, " * ", N, " = ", T) ;
+             F++ ;
+	     }
+	 do {
+            gotoxy(31,F+3); cout<< "DESEA CONTINUAR  S/N : " ;
+            OP = getch();
+            OP = toupper(OP);
+         }  while ((OP != 'S') && (OP != 'N'));
+			
+	}
+     }
+
+            
+          =================================================================
+
+  3) Hacer un programa que para un grupo de datos, permita Leer desde el teclado: 
+     CEDULA, NOMBRE, DIRECCIÖN, TELEFONO, SEXO y EST_CIVIL. Una vez capturado los 
+     datos, imprimirlos por pantalla. 
+
+                                          SOLUCION
+
+/********************************************************************************
+ *                                                                              *
+ *   ESTE PROGRAMA PERMITE CAPTURAR VALORES PARA UN GRUPO DE VARIABLES, Y LO    *
+ *   HACE DE MANERA REPETITIVA.                                                 *
+ *                                                                              *
+ *   PROBLEMA No 3 DEL TALLER No 1                                              *
+ *                                                                              *
+ ********************************************************************************/
+
+#include <stdio.h>                       // para printf, puts, putchar o getchar
+#include <windows.h>                     // libreria para gotoxy(USHORT x,USHORT y) 
+#include <iostream>                      // entrada salida (cin>> y el cout<<)
+#include <conio.h>                       // entrada para getche getch
+
+using namespace std;    // esta directiva es obligatoria para cin>> y cout<< , no se te olvide
+
+int gotoxy(USHORT x,USHORT y){                                  // Esta funcion es obligatoria
+COORD cp={x,y};                                                 // para que pueda funcionar la
+SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),cp);   // sentencia gotoxy
+}
+
+main(){
+   int CEDULA ;
+   char NOMBRE[20], DIRECCION[30], EST_CIVIL[15], SEXO;
+   char OP = 'S' ;
+   unsigned  TEL;
+   while (OP == 'S') 
+       {
+        system("cls");                  	//limpia pantalla
+        system("color 1F");
+        gotoxy(25,5); cout<<"UNIVERSIDAD POPULAR DEL CESAR";
+        gotoxy(24,6); cout<<"PROGRAMA INGENIERIA DE SISTEMAS"; 
+        gotoxy(20,10); cout<< "CEDULA     : ";
+        gotoxy(20,11); cout<< "NOMBRE     : ";
+        gotoxy(20,12); cout<< "DIRECCION  : " ;
+        gotoxy(20,13); cout<< "TELEFONO   : " ;
+        gotoxy(20,14); cout<< "SEXO  M/F  : " ;
+        gotoxy(20,15); cout<< "EST. CIVIL : " ;
+        gotoxy(33,10); cin>> CEDULA;
+        cin.sync();                                     // la uso para evitar salte y no lea para NOMBRE
+        gotoxy(33,11); gets(NOMBRE);
+        gotoxy(33,12); gets(DIRECCION);
+        gotoxy(33,13); cin>>TEL;
+        cin.sync();                                    // la uso para evitar salte y no lea para SEXO
+        gotoxy(33,14); SEXO = getchar() ;
+        cin.sync();                                    // la uso para evitar salte y no lea para EST_CIVIL
+        gotoxy(33,15); gets(EST_CIVIL);                
+        gotoxy(34,17); printf( "DATOS LEIDOS");
+        gotoxy(20,19); cout<< "CEDULA     = " << CEDULA;
+	gotoxy(20,20); cout<< "NOMBRE     = " << NOMBRE;
+	gotoxy(20,21); cout<< "DIRECCION  = " << DIRECCION ;
+	gotoxy(20,22); cout<< "TELEFONO   = " << TEL;
+	gotoxy(20,23); cout<< "SEXO       = " << SEXO ;
+	gotoxy(20,24); cout<< "EST. CIVIL = " << EST_CIVIL ; 
+        do {
+           gotoxy(27,26); cout<< "DESEA CONTINUAR  S/N : " ;
+           OP = getch();
+           OP = toupper(OP);
+        }  while ((OP != 'S') && (OP != 'N'));
+    }
+}
+
+
+
+          3)   SOLUCION :  OTRA VERSION CON VALIADACIOENES PARA ALGUNAS VARIABLES
+      ===============================================================================
+
+
+
+/********************************************************************************
+ *                                                                              *
+ *   ESTE PROGRAMA PERMITE CAPTURAR VALORES PARA UN GRUPO DE VARIABLES, Y LO    *
+ *   HACE DE MANERA REPETITIVA. ASIMISMO, VALIDA EL VALOR RECIBIDO PARA CEDULA, *
+ *   TELEFONO, SEXO y ESTADO CIVIL.                                             *
+ *   PROBLEMA No 3 DEL TALLER No 1                                              *
+ *                                                                              *
+ ********************************************************************************/
+
+#include <windows.h>  
+#include <iostream>  
+#include <conio.h>   
+
+using namespace std; 
+
+int gotoxy(USHORT x,USHORT y){                                  
+COORD cp={x,y};                                                 
+SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),cp);   
+}
+
+main(){
+	long CEDULA ;
+	char NOMBRE[20], DIRECCION[30], EST_CIVIL, SEXO;
+	char OP = 'S' ;
+	unsigned  TEL;
+	while (OP == 'S') 
+	    {
+	    system("cls"); 	//limpia pantalla
+        system("color F0");
+        gotoxy(25,5); cout<<"UNIVERSIDAD POPULAR DEL CESAR";
+        gotoxy(24,6); cout<<"PROGRAMA INGENIERIA DE SISTEMAS"; 
+        gotoxy(20,10); cout<< "CEDULA     : ";
+        gotoxy(20,11); cout<< "NOMBRE     : ";
+        gotoxy(20,12); cout<< "DIRECCION  : " ;
+        gotoxy(20,13); cout<< "TELEFONO   : " ;
+        gotoxy(20,14); cout<< "SEXO  M/F  : " ;
+        gotoxy(20,15); cout<< "EST. CIVIL : " ;
+        do {
+           gotoxy(33,10) ; cout << "              ";	
+	       gotoxy(33,10) ; cin >> CEDULA;
+	       gotoxy(20,22); cout<< "Error .... valor fuera de rango ";
+	    } while ((CEDULA <= 0) || (CEDULA > 2000000000));
+	    //getch();
+        gotoxy(20,22); cout <<"                                   ";
+        cin.sync();
+        gotoxy(33,11); gets(NOMBRE);
+        gotoxy(33,12); gets(DIRECCION);
+        do {
+           gotoxy(33,13); cout << "           ";
+	       gotoxy(33,13) ;cin >> TEL;
+	       gotoxy(20,22); cout<< "Error .... valor fuera de rango ";
+	    } while (( TEL <= 3000000000) || (TEL > 3294967295));
+        gotoxy(20,22); cout <<"                                   ";
+        cin.sync();
+        do {
+	       gotoxy(33,14); cout<< " " ;
+           gotoxy(20,20); cout << " Digite : M-> Masculino o F -> Femenino " ;
+	       gotoxy(33,14); SEXO = getchar();
+           SEXO = toupper(SEXO) ;
+        } while ((SEXO != 'M') && ( SEXO != 'F'));
+        gotoxy(20,20); cout <<"                                              ";
+        cin.sync();
+        do {
+	       gotoxy(33,15); cout<< " " ;
+           gotoxy(20,20); cout << " Digite : C-> Casado,  S -> Soltero, V -> Viudo, U -> Union LIbre " ;
+	       gotoxy(33,15); EST_CIVIL= getchar();
+           EST_CIVIL = toupper(EST_CIVIL) ;
+        } while ((EST_CIVIL != 'C') && ( EST_CIVIL != 'S') && (EST_CIVIL != 'V') && ( EST_CIVIL != 'U'));
+        gotoxy(20,20); cout <<"                                                                          ";
+        gotoxy(34,17); printf( "DATOS LEIDOS");
+        gotoxy(20,19); cout<< "CEDULA     = " << CEDULA;
+	    gotoxy(20,20); cout<< "NOMBRE     = " << NOMBRE;
+	    gotoxy(20,21); cout<< "DIRECCION  = " << DIRECCION ;
+	    gotoxy(20,22); cout<< "TELEFONO   = " << TEL;
+	    gotoxy(20,23); cout<< "SEXO       = " << SEXO ;
+	    gotoxy(20,24); cout<< "EST. CIVIL = " << EST_CIVIL ; 
+        do {
+        	gotoxy(27,26); cout<< "DESEA CONTINUAR  S/N : " ;
+        	OP = getch();
+        	OP = toupper(OP);
+        }  while ((OP != 'S') && (OP != 'N'));
+	}
+}
