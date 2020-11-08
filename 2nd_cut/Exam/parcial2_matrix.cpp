@@ -79,7 +79,7 @@ void Menu()
         do
         {
             choice = MenuChoice(h + len, "1235");
-            CenterPrint("La matriz aun no existe", 18);
+            CenterPrint("La matriz aun no existe", 17);
         } while ((size[0] == 0 || size[1] == 0) && (choice == "2" || choice == "3"));
         CenterPrint("                          ", 18);
 
@@ -287,7 +287,7 @@ void SumArray(int array[][30], int rows, int columns)
 
 void BubbleSort(int array[][30], int size)
 {
-    // TODO: Use BubbleSort to order the array and add the positiblity of use radix sort
+    // TODO: Use BubbleSort to order the array
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("ORDENAR ARREGLO.", 6);

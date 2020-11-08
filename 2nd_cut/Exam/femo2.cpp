@@ -45,6 +45,7 @@ main()
         };
     } while (opc != 5);
     system("cls");
+    getch();
 }
 
 void titulo()

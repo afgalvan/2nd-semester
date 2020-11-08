@@ -243,6 +243,7 @@ std::string MenuChoice(int position_y, std::string allow_this)
         std::cout << "                                      ";
 
         gotoxy(position_x + 3, position_y + 2);
+        std::cin.sync();
         std::getline(std::cin, choice);
         CenterPrint("Error. Opcion invalida.", position_y + 4);
     } while (AllowedInput(allow_this, choice));
