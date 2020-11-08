@@ -1,4 +1,4 @@
-/* Second Programming I exam
+/* Second Programming I's exam
  * Segundo parcial de Programación I
  * Andrés Felipe Galván
  * XX/10/2020 
@@ -78,12 +78,10 @@ void Menu()
             choice = MenuChoice(h + len, "12345");
             CenterPrint("El vector aun no existe", 18);
         } while (array_len == 0 && (choice == "2" || choice == "3" || choice == "4"));
-        CenterPrint("                          ", 18);
+        CenterPrint("                           ", 18);
 
         s_screen = 0;
-
-        if (choice != "5")
-            array_len = ArrayManagement(choice[0], array, array_len);
+        array_len = ArrayManagement(choice[0], array, array_len);
     } while (choice != "5");
 }
 
@@ -116,17 +114,23 @@ int BuildArray(int array[])
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("CREAR ARREGLO UNIDIMENSIONAL", 6);
 
-    gotoxy(center * 0.9, 8);
-    std::cout << "Ingrese el numero de elementos: ";
-    AskUser(size, 'n', 8, 32);
-    std::cout << "                                ";
-    len = atoi(size);
+    do
+    {
+        gotoxy(center * 0.91, 8);
+        std::cout << "Ingrese el numero de elementos: ";
+        CenterPrint("Numero entero de 1 - 10", 15);
+        AskUser(size, 'n', 8, center * 0.91 + 32);
+        std::cout << "                                ";
+        len = atoi(size);
+    } while (len < 1 || len > 15);
+    CenterPrint("                              ", 15);
+
 
     for (i = 0; i < len; i++)
     {
-        gotoxy(center * 0.85, 8);
+        gotoxy(center * 0.87, 8);
         std::cout << "Ingrese un valor para la posicion [" << i << "]: ";
-        AskUser(number, 'n', 8, 35);
+        AskUser(number, 'n', 8, center * 0.87 + 39);
         array[i] = atoi(number);
     }
 
@@ -267,10 +271,10 @@ void AskUser(char user_input[], char var_type, int line, int question_len)
 
     do
     {
-        gotoxy(center * 0.9 + question_len, line);
+        gotoxy(question_len, line);
         std::cout << "                                       ";
 
-        gotoxy(center * 0.9 + question_len, line);
+        gotoxy(question_len, line);
         std::cin >> user_input;
         // std::cin.getline(user_input, 30, '\n');
         is_valid = CheckValue(user_input, var_type);
