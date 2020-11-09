@@ -15,7 +15,7 @@ int ArrayManagement(char process, int array[], int size);
 int BuildArray(int array[]);
 int DigitsOf(int number);
 int AlingArray(int array[], int size);
-void ArrayTable(int array[], int size);
+void ArrayTable(int array[], int size, int line);
 void DisplayArray(int array[], int size);
 void SumArray(int array[], int size);
 void BubbleSort(int array[], int size);
@@ -125,7 +125,6 @@ int BuildArray(int array[])
     } while (len < 1 || len > 15);
     CenterPrint("                              ", 15);
 
-
     for (i = 0; i < len; i++)
     {
         gotoxy(center * 0.87, 8);
@@ -155,19 +154,17 @@ int AlingArray(int array[], int size)
     int i, all_digits = 0, table_width;
 
     for (i = 0; i < size; i++)
-    {
         all_digits += DigitsOf(array[i]);
-    }
     table_width = all_digits + size + 1;
 
     return (width - table_width) / 2;
 }
 
-void ArrayTable(int array[], int size)
+void ArrayTable(int array[], int size, int line)
 {
     int i, j, center_table = AlingArray(array, size);
 
-    gotoxy(center_table, 8);
+    gotoxy(center_table, line);
     std::cout << char(218);
     for (i = 0; i < size; i++)
     {
@@ -178,7 +175,7 @@ void ArrayTable(int array[], int size)
     }
     std::cout << char(191);
 
-    gotoxy(center_table, 9);
+    gotoxy(center_table, line + 1);
     std::cout << char(179);
     for (i = 0; i < size; i++)
     {
@@ -186,7 +183,7 @@ void ArrayTable(int array[], int size)
         std::cout << char(179);
     }
 
-    gotoxy(center_table, 10);
+    gotoxy(center_table, line + 2);
     std::cout << char(192);
     int x;
     for (i = 0; i < size; i++)
@@ -204,30 +201,51 @@ void DisplayArray(int array[], int size)
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("MOSTRAR ARREGLO UNIDIMENSIONAL", 6);
-    ArrayTable(array, size);
-    CenterPrint("", 12);
+    ArrayTable(array, size, 8);
+    CenterPrint("Presione cualquier tecla para volver... ", 22);
     getch();
 }
 
 void SumArray(int array[], int size)
 {
     // TODO: Print the result in center
-    int i, addition = 0;
+    int i, acum, addition[1];
 
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("SUMAR TERMINOS DEL VECTOR", 6);
 
     for (i = 0; i < size; i++)
-        addition += array[i];
+        acum += array[i];
+    addition[0] = acum;
+
+    ArrayTable(array, size, 8);
+    CenterPrint("RESULTADO", 12);
+    ArrayTable(addition, 1, 13);
+    CenterPrint("Presione cualquier tecla para volver... ", 22);
+    getch();
 }
 
 void BubbleSort(int array[], int size)
 {
     // TODO: Use BubbleSort to order the array and add the positiblity of use radix sort
+    int i, j, aux;
+
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
-    CenterPrint("ORDENAR ARREGLO.", 6);
+    CenterPrint("ORDENAR ARREGLO - METODO BURBUJA.", 6);
+    for (i = 1; i < size; i++)
+        for (j = size - 1; j >= i; j--)
+        {
+            if (array[j - 1] > array[j])
+            {
+                aux = array[j - 1];
+                array[j - 1] = array[j];
+                array[j] = aux;
+            }
+        }
+    CenterPrint("Ok, arreglo ordenado.", 8);
+    getch();
 }
 
 std::string MenuChoice(int position_y, std::string allow_this)
