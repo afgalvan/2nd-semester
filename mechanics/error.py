@@ -1,8 +1,8 @@
 PI = 3.14
 
+
 def main():
     fh = open("1_parcial/pdata3.txt")
-    
     for line in fh:
         m = float(line)
         error = (PI - m) / PI

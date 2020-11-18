@@ -17,7 +17,10 @@ int menu();
 int leer_arreglo(int n, int arreglo[]);
 void consultar(int n, int arreglo[]);
 void sumar(int n, int arreglo[]);
+void burbuja(int n, int arreglo[]);
 void eliminar(int n, int arreglo[]);
+void pares(int n, int arreglo[]);
+
 
 main()
 {
@@ -40,12 +43,14 @@ main()
             sumar(tam, vector);
             break;
         case 4:
-            eliminar(tam, vector);
+            burbuja(tam, vector);
+            break;
+        case 5:
             break;
         };
     } while (opc != 5);
     system("cls");
-    getch();
+    // getch();
 }
 
 void titulo()
@@ -69,7 +74,7 @@ int menu()
     gotoxy(39, 11);
     cout << "3. SUMAR VECTOR";
     gotoxy(39, 12);
-    cout << "4. ELIMINAR EN EL VECTOR ";
+    cout << "4. ORDENAR EL VECTOR ";
     gotoxy(39, 14);
     cout << "5. SALIR DEL PROGRAMA";
     do
@@ -116,7 +121,7 @@ int leer_arreglo(int n, int arreglo[])
         cout << "[" << i << "] Ingrese un valor para el vector : ";
         cin >> arreglo[i];
     }
-    
+
     return n;
 }
 
@@ -126,8 +131,8 @@ void consultar(int n, int arreglo[])
 
     if (n == 0)
     {
-        gotoxy(50, 24);
-        cout << "NO Existe Vector";
+        gotoxy(47, 24);
+        cout << "El vector no existe";
         getch();
     }
     else
@@ -150,8 +155,8 @@ void sumar(int n, int arreglo[])
 
     if (n == 0)
     {
-        gotoxy(55, 24);
-        cout << "NO Existe Vector";
+        gotoxy(47, 24);
+        cout << "El vector no existe";
         getch();
     }
     else
@@ -178,8 +183,8 @@ void eliminar(int n, int arreglo[])
 {
     if (n == 0)
     {
-        gotoxy(55, 24);
-        cout << "NO Existe Vector";
+        gotoxy(47, 24);
+        cout << "El vector no existe";
         getch();
     }
     else
@@ -188,5 +193,52 @@ void eliminar(int n, int arreglo[])
         gotoxy(45, 9);
         cout << "ELMINAR ELEMENTO DEL VECTOR";
     }
-    
+}
+
+void pares(int n, int arreglo[])
+{
+    if (n == 0)
+    {
+        gotoxy(47, 24);
+        cout << "El vector no existe";
+        getch();
+    }
+    else
+    {
+        titulo();
+        gotoxy(45, 9);
+        cout << "ELEMENTOS PARES DEL VECTOR";
+    }
+}
+
+void burbuja(int n, int arreglo[])
+{
+    int i, k, aux;
+    if (n == 0)
+    {
+        gotoxy(47, 24);
+        cout << "El vector no existe";
+        getch();
+    }
+    else
+    {
+        titulo();
+        gotoxy(40, 9);
+        cout << "ORDENAR VECTOR POR METODO BURBUJA";
+        for (i = 0; i < n; i++)
+        {
+            for (k = 0; k < n; k++)
+            {
+                if (arreglo[k - 1] > arreglo[k])
+                {
+                    aux = arreglo[k - 1];
+                    arreglo[k-1] = arreglo[k];
+                    arreglo[k] = aux;
+                }
+            }
+        }
+        gotoxy(48, 14);
+        cout << "Vector ordenado";
+        getch();
+    }
 }

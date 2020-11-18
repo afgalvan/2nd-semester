@@ -78,7 +78,7 @@ void Menu()
     system("cls");
     if (s_screen)
         SplashScreen();
-    s_screen = 0; // Don't show the splash screen anymore
+        s_screen = 0; // Don't show the splash screen anymore
 
     do
     {
@@ -123,6 +123,8 @@ void BuildArray(int array[][10], int size[])
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("CREAR ARREGLO BIDIMENSIONAL.", 6);
 
+
+    
     gotoxy(center * 0.91, 8);
     std::cout << "Ingrese el numero de filas    : ";
     gotoxy(center * 0.91, 9);

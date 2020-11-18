@@ -1,13 +1,7 @@
 /* Second Programming I exam
  * Segundo parcial de Programación I
  * Andrés Felipe Galván
- * 11/11/2020 
- * 
- * 1) CREAR E IMPRIMIR LA MATRIZ Y EL VECTOR,  TIENE UN VALOR DE 3.0 (TRES, PUNTO,  CERO).
- * 2) USAR LAS FUNCIONES PARA : CREAR E IMPRIMIR LA MATRIZ  Y OBTENER E IMPRIMIR EL VECTOR,
- * TIENE UN VALOR DE 2.0 (DOS, PUNTO, CERO). ESTO ES, DEBE DESPLEGAR UN MENÚ CON LAS
- * OPCIONES : 1) CREAR LA MATRIZ, 2) IMPRIMIR LA MATRIZ, 3) OBTENER EL VECTOR E IMPRIMIRLO
- * Y 4 ) SALIR.
+ * XX/10/2020 
  */
 
 #include <iostream>
@@ -17,19 +11,17 @@
 void SplashScreen();
 void Menu();
 std::string MenuChoice(int position_y, std::string allow_this);
-void ArrayManagement(char process, int array[][10], int size[]);
-void BuildArray(int array[][10], int size[]);
+void ArrayManagement(char process, int array[][30], int size[]);
+void BuildArray(int array[][30], int size[]);
 int DigitsOf(int number);
-int AlingArray(int array[], int size);
-void LargestInColumn(int list[], int array[][10], int rows, int columns);
+int AlingArray(int array[][30], int size);
+void LargestInColumn(int list[], int array[][30], int rows, int columns);
 void DelimiterLines(int r, int columns, int lines[]);
 void DownLines(int columns, int lines[]);
-void ArrayTable(int array[][10], int rows, int columns, int position_y);
-void DisplayArray(int array[][10], int rows, int columns);
-void VectorTable(int vector[], int size, int line);
-void ToVector(int array[][10], int rows, int columns);
-void SumArray(int array[][10], int rows, int columns);
-void BubbleSort(int array[][10], int size);
+void ArrayTable(int array[][30], int rows, int columns, int position_y);
+void DisplayArray(int array[][30], int rows, int columns);
+void SumArray(int array[][30], int rows, int columns);
+void BubbleSort(int array[][30], int size);
 bool CheckValue(std::string input, char type);
 void AskUser(char user_input[], char var_type, int line, int question_len);
 bool AllowedInput(std::string allowed, std::string user_input);
@@ -68,17 +60,17 @@ void SplashScreen()
 void Menu()
 {
     // Prompt the main menu to the user.
-    std::string menu_options[] = {"1 - ASIGNAR VALORES A LA MATRIZ", "2 - CONSULTAR VALORES DE LA MATRIZ", "3 - MOSTRAR VECTOR", "4 - SALIR"};
+    std::string menu_options[] = {"1 - ASIGNAR VALORES A LA MATRIZ", "2 - CONSULTAR VALORES DE LA MATRIZ", "3 - SUMAR MATRIZ", "4 - SALIR"};
     std::string choice;
     int len = sizeof(menu_options) / sizeof(*menu_options);
-    int array[10][10], size[] = {0, 0};
+    int array[30][30], size[] = {0, 0};
     int h = 9, choice_int;
 
     system("color 3F");
     system("cls");
     if (s_screen)
         SplashScreen();
-    s_screen = 0; // Don't show the splash screen anymore
+        s_screen = 0; // Don't show the splash screen anymore
 
     do
     {
@@ -97,25 +89,24 @@ void Menu()
     } while (choice != "4");
 }
 
-void ArrayManagement(char process, int array[][10], int size[])
+void ArrayManagement(char process, int array[][30], int size[])
 {
     switch (process)
     {
     case '1':
-        BuildArray(array, size); // CREAR
+        BuildArray(array, size);
         break;
     case '2':
-        DisplayArray(array, size[0], size[1]); // MOSTRAR
+        DisplayArray(array, size[0], size[1]);
         break;
     case '3':
-        ToVector(array, size[0], size[1]); // VECTOR
+        SumArray(array, size[0], size[1]);
         break;
     }
 }
 
-void BuildArray(int array[][10], int size[])
+void BuildArray(int array[][30], int size[])
 {
-    // Function to Create a matrix
     char rows[30], columns[30], number[30];
     int r, c;
 
@@ -123,30 +114,20 @@ void BuildArray(int array[][10], int size[])
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("CREAR ARREGLO BIDIMENSIONAL.", 6);
 
-    gotoxy(center * 0.91, 8);
+    gotoxy(center * 0.9, 8);
     std::cout << "Ingrese el numero de filas    : ";
-    gotoxy(center * 0.91, 9);
+    gotoxy(center * 0.9, 9);
     std::cout << "Ingrese el numero de columnas : ";
-    CenterPrint("Numero entero de 1 - 10", 15);
 
-    do
-    {
-        AskUser(rows, 'n', 8, 33);
-        std::cout << "                                  ";
-        size[0] = atoi(rows);
-    } while (size[0] < 1 || size[0] > 10);
-
-    do
-    {
-        AskUser(columns, 'n', 9, 33);
-        std::cout << "                                  ";
-        size[1] = atoi(columns);
-    } while (size[1] < 1 || size[1] > 10);
-    CenterPrint("                              ", 15);
-
+    AskUser(rows, 'n', 8, 32);
+    std::cout << "                                  ";
+    AskUser(columns, 'n', 9, 32);
+    std::cout << "                                  ";
     gotoxy(center * 0.9, 9);
     std::cout << "                                           ";
-    CenterPrint("                                       ", 15);
+
+    size[0] = atoi(rows);
+    size[1] = atoi(columns);
 
     for (r = 0; r < size[0]; r++)
     {
@@ -162,7 +143,6 @@ void BuildArray(int array[][10], int size[])
 
 int DigitsOf(int number)
 {
-    // Function to count the digits of a term
     int digits = 0, n = number;
     if (number == 0)
         return 1;
@@ -174,19 +154,18 @@ int DigitsOf(int number)
     return digits;
 }
 
-int AlingArray(int array[], int size)
+int AlingArray(int array[][30], int size)
 {
-    //Count a the length of a row and return the best position in x
     int i, all_digits = 0, table_width;
 
     for (i = 0; i < size; i++)
-        all_digits += DigitsOf(array[i]);
+        all_digits += DigitsOf(array[0][i]);
     table_width = all_digits + size + 1;
 
     return (width - table_width) / 2;
 }
 
-void LargestInColumn(int list[], int array[][10], int rows, int columns)
+void LargestInColumn(int list[], int array[][30], int rows, int columns)
 {
     int i, j;
     int max;
@@ -243,12 +222,12 @@ void DownLines(int columns, int lines[])
     }
 }
 
-void ArrayTable(int array[][10], int rows, int columns, int position_y)
+void ArrayTable(int array[][30], int rows, int columns, int position_y)
 {
     int r, c;
     int a, l, lines[columns];
     int i, blanks;
-    int center_table = AlingArray(array[0], columns);
+    int center_table = AlingArray(array, columns);
 
     LargestInColumn(lines, array, rows, columns);
 
@@ -273,43 +252,7 @@ void ArrayTable(int array[][10], int rows, int columns, int position_y)
     }
 }
 
-void VectorTable(int vector[], int size, int line)
-{
-    int i, j, center_table = AlingArray(vector, size);
-
-    gotoxy(center_table, line);
-    std::cout << char(218);
-    for (i = 0; i < size; i++)
-    {
-        for (j = 0; j < DigitsOf(vector[i]); j++)
-            std::cout << char(196);
-        if (i + 1 < size)
-            std::cout << char(194);
-    }
-    std::cout << char(191);
-
-    gotoxy(center_table, line + 1);
-    std::cout << char(179);
-    for (i = 0; i < size; i++)
-    {
-        std::cout << vector[i];
-        std::cout << char(179);
-    }
-
-    gotoxy(center_table, line + 2);
-    std::cout << char(192);
-    int x;
-    for (i = 0; i < size; i++)
-    {
-        for (j = 0; j < DigitsOf(vector[i]); j++)
-            std::cout << char(196);
-        if (i + 1 < size)
-            std::cout << char(193);
-    }
-    std::cout << char(217);
-}
-
-void DisplayArray(int array[][10], int rows, int columns)
+void DisplayArray(int array[][30], int rows, int columns)
 {
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
@@ -319,32 +262,32 @@ void DisplayArray(int array[][10], int rows, int columns)
     getch();
 }
 
-void ToVector(int array[][10], int rows, int columns)
+void SumArray(int array[][30], int rows, int columns)
 {
     // Sum the matrix and print the result in an 1D array
-    int r, c, i, vector[100], size = rows * columns;
+    int r, c, acum, addition[1][30];
     int result_position = rows * 2 + 1;
 
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
-    CenterPrint("MOSTRAR VECTOR RESULTANTE", 6);
+    CenterPrint("SUMAR TERMINOS DEL VECTOR", 6);
 
-    i = 0;
-    for (r = 0; r < rows; r++)
-        for (c = 0; c < columns; c++)
-        {
-            vector[i] = array[r][c];
-            i++;
-        }
+    for (c = 0; c < columns; c++)
+    {
+        acum = 0;
+        for (r = 0; r < rows; r++)
+            acum += array[r][c];
+        addition[0][c] = acum;
+    }
 
     ArrayTable(array, rows, columns, 8);
     CenterPrint("Resultado", result_position + 9);
-    VectorTable(vector, size, result_position + 10);
+    ArrayTable(addition, 1, columns, result_position + 10);
     CenterPrint("Presione cualquier tecla para continuar... ", result_position + 14);
     getch();
 }
 
-void BubbleSort(int array[][10], int size)
+void BubbleSort(int array[][30], int size)
 {
     // TODO: Use BubbleSort to order the array
     system("cls");
