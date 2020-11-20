@@ -6,24 +6,9 @@ if __name__ == "__main__":
     print("Ejecutar el archivo main.py")
 else:
     from src.curses_actions import *
+    from src.menu_taller import show_points
+    from src.credits import more_info
     from src.exit_menu import exit_menu
-
-
-def show_menu(stdscr, selected_row_idx, options):
-    h, w = stdscr.getmaxyx()
-    for idx, row in enumerate(options):
-        x = w//2 - len(row)//2
-        y = h//2 - len(options)//2 + idx
-        if row == "Salir":
-            y += 1
-        if idx == selected_row_idx:
-            stdscr.attron(curses.color_pair(1))
-            stdscr.addstr(y, x, row)
-            stdscr.attroff(curses.color_pair(1))
-        else:
-            stdscr.addstr(y, x, row)
-
-    stdscr.refresh()
 
 
 def main_menu(stdscr, current_option=0):
@@ -39,7 +24,11 @@ def main_menu(stdscr, current_option=0):
                                              curses.KEY_UP, curses.KEY_DOWN)
         show_menu(stdscr, current_option, options)
         if select:
-            if current_option == 2:
+            if current_option == 0:
+                show_points(stdscr)
+            elif current_option == 1:
+                more_info(stdscr)
+            elif current_option == 2:
                 exit_menu(stdscr)
 
 

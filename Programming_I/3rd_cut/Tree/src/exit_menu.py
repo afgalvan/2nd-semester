@@ -24,7 +24,7 @@ def show_exit(stdscr, selected_op_idx, options):
     stdscr.refresh()
 
 
-def exit_menu(stdscr, current_option=1):
+def exit_menu(stdscr, current_option=0):
     h, w = stdscr.getmaxyx()
     stdscr.clear()
     center_print(stdscr, "¿Seguro que desea salir?", h//2 - 1)
