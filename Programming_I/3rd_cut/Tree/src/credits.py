@@ -12,40 +12,36 @@ Con la colaboración de
 Javier Guerra
 Santiago Andrés
 
-Copyright (c) 2020 by Andrés Galván 
+Copyright (c) 2020 by Andrés Galván
 """
 
-
-def more_info(stdscr, current_option=0):
-    h, w = stdscr.getmaxyx()
-    stdscr.clear()
+def more_info(stdscr, current_option):
     options = ("Créditos", "Repositorio", "Licencia", "Volver al menú")
 
+    current_option = menu_displayer(stdscr, options, "MÁS INFORMACIÓN", current_option)
+    if current_option == 0:
+        show_credits(stdscr)
+    elif current_option == 1:
+        open_url("https://github.com/JuniorWriter")
+    elif current_option == 2:
+        show_license(stdscr)
+    else:
+        stdscr.clear()
+        return 0
+    more_info(stdscr, current_option)
 
-    while True:
-        center_print(stdscr, "MÁS INFORMACIÓN", h//2 - len(options))
-        show_menu(stdscr, current_option, options)
-        select, current_option = arrow_moves(stdscr, current_option, options,
-                                             curses.KEY_UP, curses.KEY_DOWN)
-        show_menu(stdscr, current_option, options)
-        if select:
-            if current_option == 0:
-                show_credits(stdscr)
-            if current_option == 1:
-                open_url("https://github.com/JuniorWriter")
-            if current_option == len(options)-1:
-                stdscr.clear()
-                break
 
 
 def show_credits(stdscr):
     h, w = stdscr.getmaxyx()
+    credits_list = credits_text.split("\n")
+    space_diff = 2
+    diff_limit = len(credits_list) + 1
+    last_line = 3 - len(credits_list)
 
     curses.curs_set(0)
     y = h-1
-    credits_list = credits_text.split("\n")
-    space_diff = 2
-    while y >= -4:
+    while y >= last_line:
         stdscr.clear()
         for line in credits_list:
             if y + 1 > h:
@@ -57,8 +53,23 @@ def show_credits(stdscr):
             y += 1
         sleep(0.4)
         y -= space_diff
-        if space_diff < 9:
+        if space_diff < diff_limit:
             space_diff += 1
 
+def show_license(stdscr):
+    stdscr.clear()
+    license_text =  """GNU GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
 
-# curses.wrapper(animation)
+Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
+
+This Program comes WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+"""
+    license_list = license_text.split("\n")
+    h, w = stdscr.getmaxyx()
+    row = h//2 - len(license_list)//2
+    for y, line in enumerate(license_list):
+        center_print(stdscr, line, row + y)
+    stdscr.getch()
