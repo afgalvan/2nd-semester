@@ -372,7 +372,11 @@ tags
 .vscode
 .vscode/
 *tempCodeRunnerFile
-tempCodeRunnerFile
+tempCodeRunnerFile.py
+tempCodeRunnerFile.cpp
+tempCodeRunnerFile.c
+tempCodeRunnerFile.ts
+tempCodeRunnerFile.js
 ^tempCodeRunnerFile
 .vscode/*
 !.vscode/tasks.json
