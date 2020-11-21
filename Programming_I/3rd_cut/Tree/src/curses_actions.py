@@ -46,3 +46,18 @@ def arrow_moves(stdscr, current_row, options, decrement, increment):
     elif key == curses.KEY_ENTER or key in [10, 13]:
         return True, current_row
     return False, current_row
+
+
+def menu_displayer(stdscr, options, title, current_option):
+    h, w = height, width
+    stdscr.clear()
+
+
+    while True:
+        center_print(stdscr, title.upper(), h//2 - len(options))
+        show_menu(stdscr, current_option, options)
+        is_selected, current_option = arrow_moves(stdscr, current_option, options,
+                                                curses.KEY_UP, curses.KEY_DOWN)
+        show_menu(stdscr, current_option, options)
+        if is_selected:
+            return current_option
