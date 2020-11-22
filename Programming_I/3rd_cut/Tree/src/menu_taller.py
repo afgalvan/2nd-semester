@@ -1,3 +1,4 @@
+from os import system
 if __name__ == "__main__":
     print("Ejecutar el archivo main.py")
 else:
@@ -10,7 +11,8 @@ def show_points(stdscr, current_option):
 
     current_option = menu_displayer(stdscr, options, "PUNTOS DEL TALLER", current_option)
     if current_option == 0:
-        curses.curs_set(1)
+        stdscr.clear()
+        curses.endwin()
         main()
     elif current_option == len(options)-1:
         stdscr.clear()

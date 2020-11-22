@@ -16,13 +16,14 @@ Copyright (c) 2020 by Andrés Galván
 """
 
 def more_info(stdscr, current_option):
+    URL = "https://github.com/JuniorWriter"
     options = ("Créditos", "Repositorio", "Licencia", "Volver al menú")
 
     current_option = menu_displayer(stdscr, options, "MÁS INFORMACIÓN", current_option)
     if current_option == 0:
         show_credits(stdscr)
     elif current_option == 1:
-        open_url("https://github.com/JuniorWriter")
+        open_url(URL)
     elif current_option == 2:
         show_license(stdscr)
     else:
@@ -57,7 +58,6 @@ def show_credits(stdscr):
             space_diff += 1
 
 def show_license(stdscr):
-    stdscr.clear()
     license_text =  """GNU GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
 
@@ -67,6 +67,7 @@ This Program comes WITHOUT ANY WARRANTY; without even the implied
 warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 """
+    stdscr.clear()
     license_list = license_text.split("\n")
     h, w = stdscr.getmaxyx()
     row = h//2 - len(license_list)//2
