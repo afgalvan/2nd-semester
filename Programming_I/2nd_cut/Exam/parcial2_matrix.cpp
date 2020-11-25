@@ -346,7 +346,6 @@ void ToVector(int array[][10], int rows, int columns)
 
 void BubbleSort(int array[][10], int size)
 {
-    // TODO: Use BubbleSort to order the array
     system("cls");
     PrintTitle("   ARREGLOS   ", 4);
     CenterPrint("ORDENAR ARREGLO.", 6);

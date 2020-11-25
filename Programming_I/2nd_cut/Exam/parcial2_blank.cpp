@@ -210,7 +210,6 @@ void DisplayArray(int array[], int size)
 
 void SumArray(int array[], int size)
 {
-    // TODO: Print the result in center
     int i, acum, addition[1];
 
     system("cls");
