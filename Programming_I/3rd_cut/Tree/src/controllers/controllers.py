@@ -63,7 +63,7 @@ def clear():
         call("clear")
 
 
-def center_this(text):
+def center_this(text: str):
     """Given a string line return the most centered position
     to prompt in the terminal. With the get_terminal_size()
     function previously used to get the window dimensions and
@@ -92,7 +92,7 @@ def gotoxy(x, y):
     print("%c[%d;%df" % (0x1B, y, x), end='')
 
 
-def center_print(text, *args):
+def center_print(text: str, *args):
     """"""
     y = args[0]
     width_alter = 0
@@ -104,7 +104,7 @@ def center_print(text, *args):
     print(text, end="")
 
 
-def error_print(error_msg, position="m", *args):
+def error_print(error_msg: str, position="m", *args):
     """"""
     width_alter = 0
     y = 0
