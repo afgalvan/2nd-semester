@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
 /* Librerías exclusivas de Windows OS. */
 #include <conio.h>
 #include <windows.h>
@@ -20,6 +21,8 @@ void ChoiceManagement(char process);
 void RepeatProgram(int position_y);
 // User's actions
 void FillData();
+void UserForm();
+char KeepDoing(int line);
 void AskData(char user_input[], char data_type, int line);
 // Validations
 bool IsValidType(char input[], char type);
@@ -29,32 +32,38 @@ void MenuChoice(char choice[], int position_y, std::string allow_this);
 void FileAccess();
 std::string SplitPath(std::string folder_path, std::string file);
 int IsDatabaseEmpty();
+int UpdateTable();
+// Show one user at time
+void DisplayEachUser(int rows);
+void UserInfoCard();
+void Pagination(int current, int total, int line);
 // Table prompt functions
+void TableHeaders();
 void DisplayStruct(int rows);
-int AlingTable(int all_characters[]);
+void DataTable(int rows, int position_y);
+void PromptTableElement(int row, int column, int lines[]);
 void LargestInColumn(int list[], int columns, int rows);
+int AlingTable(int all_characters[]);
 void DelimiterLines(int r, int columns, int lines[]);
 void DownLines(int columns, int lines[]);
-void TableHeaders();
-int CountElements();
-void DataTable(int rows, int position_y);
+int NextTablePage(int center_table, int position_y, int lines[]);
 // Search user functions
 void AskUserId();
 int SearchById(char user_id[], char data_found[][100]);
-void UserInfoCard(char user_info[][100]);
 // Controllers
 void SetWindow();
 void gotoxy(SHORT x, SHORT y);
 int CenterThis(std::string text);
 void CenterPrint(std::string text, int position_y);
+void Capitalize(char text[]);
 void PrintTitle(std::string title, int height);
 int LongestWord(std::string words[], int len);
 void BoxIn(std::string options[], int options_quantity, int height);
 
-// TODO: Prompt Table with pagination
-// TODO: Individual user table
+// TODO: Paginations index
 // Contexto importante de la ventana de la terminal.
-int width, center, s_screen = 1, subsection, keys = 4;
+int width, center, s_screen = 1, subsection;
+int keys = 4;
 char data_table[50][4][100];
 std::string results_path = "parcial_galvan\\datos.txt";
 
@@ -98,7 +107,7 @@ void Menu()
     /* Mostrar un menú centrado, dentro de un cuadro con por razones
        estéticas que tiene como propósito mejorar la experiencia de uso,
        aplicando algebra básica para calcular la posición más centrada
-       posible, para los diferentes tamaños de pan talla en las cuales
+       posible, para los diferentes tamaños de pantalla en las cuales
        se pueda llegar a ejecutar el programa.
     
      * Se usa una lista para las opciones, para poder agregar más opcio-
@@ -106,9 +115,9 @@ void Menu()
        pueda introducir las opciones que se le muestran.
     */
 
-    std::string menu_options[] = {"1 - INGRESAR DATOS", "2 - CONSULTAR REGISTRO",
+    std::string menu_options[] = {"1 - INGRESAR DATOS", "2 - CONSULTAR REGISTROS",
                                   "3 - CONSULTAR TABLA DE DATOS", "4 - BUSCAR UN DATO",
-                                  /*"4 - BORRAR UN DATO", "5 - BORRAR TODOS LOS DATOS",*/" ",  "5 - SALIR"};
+                                  "5 - EDITAR UN REGISTRO", /*"5 - BORRAR TODOS LOS DATOS",*/ " ", "6 - SALIR"};
 
     char choice[50];
     int len = sizeof(menu_options) / sizeof(*menu_options); // Obtener el tamaño de un arreglo
@@ -130,24 +139,25 @@ void Menu()
         BoxIn(menu_options, len, heigth);
         do
         {
-            MenuChoice(choice, heigth + len, "12345");
+            MenuChoice(choice, heigth + len, "123456");
             CenterPrint("No existen datos guardados.", 19);
-        } while (IsDatabaseEmpty() && IsAllowedInput("234", choice));
+        } while (IsDatabaseEmpty() && IsAllowedInput("2345", choice));
         CenterPrint("                              ", 19);
 
         ChoiceManagement(choice[0]);
-    } while (choice[0] != '5');
+    } while (choice[0] != '6');
 }
 
 void ChoiceManagement(char process)
 {
-    int rows = CountElements();
+    int rows = UpdateTable();
     switch (process)
     {
     case '1':
         FillData();
         break;
     case '2':
+        DisplayEachUser(rows);
         break;
     case '3':
         DisplayStruct(rows);
@@ -161,9 +171,39 @@ void ChoiceManagement(char process)
 /* ============================= User's actions ================================ */
 void FillData()
 {
-    char register_again[10];
-
     // TODO: Document FillData function
+    char register_again;
+
+    UserForm();
+    AskData(Employee.id_document, 'n', 8);
+    AskData(Employee.name, 'a', 9);
+    Capitalize(Employee.name);
+    gotoxy(subsection + 12, 9);
+    std::cout << Employee.name;
+    AskData(Employee.phone_number, 'n', 10);
+
+    CenterPrint("F-> Femenino  y  M-> Masculino", 14);
+    do
+    {
+        AskData(Employee.genre, 'a', 11);
+    } while (!IsAllowedInput("fm", Employee.genre));
+    CenterPrint("                              ", 14);
+    Capitalize(Employee.genre);
+    gotoxy(subsection + 12, 11);
+    std::cout << Employee.genre;
+
+    FileAccess(); // Verificar que el archivo exista
+    file_hand.open(results_path.c_str(), ios::app);
+    file_hand.write((char *)&Employee, sizeof(Data));
+    file_hand.close();
+
+    register_again = KeepDoing(20);
+    if (register_again == 's')
+        FillData();
+}
+
+void UserForm()
+{
     system("cls");
     PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
     CenterPrint("REGISTRAR EMPLEADOS", 6);
@@ -177,31 +217,18 @@ void FillData()
     std::cout << "TELEFONO  : ";
     gotoxy(subsection, 11);
     std::cout << "SEXO M/F  : ";
+}
 
-    AskData(Employee.id_document, 'n', 8);
-    AskData(Employee.name, 'a', 9);
-    AskData(Employee.phone_number, 'n', 10);
+char KeepDoing(int line)
+{
+    char user_choice;
 
-    CenterPrint("F-> Femenino  y  M-> Masculino", 14);
+    CenterPrint("CONTINUAR? S/N : ", line);
     do
     {
-        AskData(Employee.genre, 'a', 11);
-    } while (!IsAllowedInput("fm", Employee.genre));
-    CenterPrint("                              ", 14);
-
-    FileAccess(); // Verificar que el archivo exista
-    file_hand.open(results_path.c_str(), ios::app);
-    file_hand.write((char *)&Employee, sizeof(Data));
-    file_hand.close();
-
-    gotoxy(center * 1.04, 22);
-    std::cout << "CONTINUAR? S/N : ";
-    do
-    {
-        AskData(register_again, 'a', 22);
-    } while (!IsAllowedInput("sn", register_again));
-    if (register_again[0] == 's')
-        FillData();
+        user_choice = tolower(getche());
+    } while (user_choice != 'n' && user_choice != 's');
+    return user_choice;
 }
 
 void AskData(char user_input[], char data_type, int line)
@@ -329,27 +356,142 @@ int IsDatabaseEmpty()
     return 0;
 }
 
+int UpdateTable()
+{
+    // TODO: Document CountElements
+    file_hand.open(results_path.c_str(), ios ::in);
+
+    int rows = 1;
+    while (!file_hand.eof())
+    {
+        file_hand.read((char *)&Employee, sizeof(Data));
+
+        strcpy(data_table[rows][0], Employee.id_document);
+        strcpy(data_table[rows][1], Employee.name);
+        strcpy(data_table[rows][2], Employee.phone_number);
+        strcpy(data_table[rows][3], Employee.genre);
+        rows++;
+    }
+    file_hand.close();
+    return rows - 1;
+}
+
+/* ============================= Show one user at time ================================ */
+void DisplayEachUser(int rows)
+{
+    char choice;
+    int page = 1;
+
+    file_hand.open(results_path.c_str(), ios::in);
+    while (!file_hand.eof())
+    {
+        system("cls");
+
+        file_hand.read((char *)&Employee, sizeof(Data));
+        if (file_hand.eof())
+            break;
+        PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
+        CenterPrint("TABLA DE USUARIOS REGISTRADOS", 6);
+        Pagination(page, rows - 1, 17);
+        UserInfoCard();
+        choice = KeepDoing(20);
+        if (choice == 'n')
+            break;
+        page++;
+    }
+    file_hand.close();
+}
+
+void UserInfoCard()
+{
+    std::string data_context[7];
+
+    data_context[0] = "CEDULA   : " + std::string(Employee.id_document);
+    data_context[1] = " ";
+    data_context[2] = "NOMBRE   : " + std::string(Employee.name);
+    data_context[3] = " ";
+    data_context[4] = "TELEFONO : " + std::string(Employee.phone_number);
+    data_context[5] = " ";
+    data_context[6] = "SEXO M/F : " + std::string(Employee.genre);
+
+    BoxIn(data_context, 7, 9);
+}
+
+void Pagination(int current, int total, int line)
+{
+    char buffer_1[20], buffer_2[20];
+    char *temp_1 = itoa(current, buffer_1, 10);
+    char *temp_2 = itoa(total, buffer_2, 10);
+    std::string current_str = std::string(temp_1);
+    std::string total_str = std::string(temp_2);
+
+    CenterPrint(current_str + " / " + total_str, line);
+}
+
 /* ============================= Table prompt functions ================================ */
+void TableHeaders()
+{
+    // TODO: Document TableHeaders
+    strcpy(data_table[0][0], "CEDULA");
+    strcpy(data_table[0][1], "NOMBRE");
+    strcpy(data_table[0][2], "TELEFONO");
+    strcpy(data_table[0][3], "SEXO M/F");
+}
+
 void DisplayStruct(int rows)
 {
     system("cls");
     PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
     CenterPrint("TABLA DE USUARIOS REGISTRADOS", 6);
     DataTable(rows, 8);
-    CenterPrint("Presione cualquier tecla para volver... ", 22);
+    CenterPrint("Presione cualquier tecla para volver... ", 25);
     getch();
 }
 
-int AlingTable(int all_characters[])
+void DataTable(int rows, int position_y)
 {
-    // TODO: Document AlingTable
-    int table_width, i, total_chars = 0;
+    // TODO: Document DataTable
+    int r, c;
+    int current_line, lines[50];
+    int center_table, page = 1, total_pages = ((rows - 2) / 6) + 1;
+    char choice;
 
-    for (i = 0; i < keys; i++)
-        total_chars += all_characters[i];
+    LargestInColumn(lines, keys, rows);
+    center_table = AlingTable(lines);
 
-    table_width = total_chars + keys + 1;
-    return (width - table_width) / 2;
+    for (r = 0, current_line = 0; r < rows; r++, current_line += 2)
+    {
+        gotoxy(center_table, position_y + current_line);
+        DelimiterLines(r, keys, lines);
+
+        gotoxy(center_table, position_y + 1 + current_line);
+        std::cout << char(179);
+        for (c = 0; c < keys; c++)
+            PromptTableElement(r, c, lines);
+
+        gotoxy(center_table, position_y + 2 + current_line);
+        DownLines(keys, lines);
+        Pagination(page, total_pages, 23);
+        if (position_y + current_line >= 20)
+        {
+            choice = KeepDoing(25);
+            if (choice == 'n')
+                break;
+            current_line = NextTablePage(center_table, position_y, lines);
+            page++;
+        }
+    }
+}
+
+void PromptTableElement(int row, int column, int lines[])
+{
+    int i, blanks;
+
+    std::cout << data_table[row][column];
+    blanks = lines[column] - strlen(data_table[row][column]);
+    for (i = 0; i < blanks; i++)
+        std::cout << " ";
+    std::cout << char(179);
 }
 
 void LargestInColumn(int list[], int columns, int rows)
@@ -367,6 +509,18 @@ void LargestInColumn(int list[], int columns, int rows)
                 max = strlen(data_table[j][i]);
         list[i] = max;
     }
+}
+
+int AlingTable(int all_characters[])
+{
+    // TODO: Document AlingTable
+    int table_width, i, total_chars = 0;
+
+    for (i = 0; i < keys; i++)
+        total_chars += all_characters[i];
+
+    table_width = total_chars + keys + 1;
+    return (width - table_width) / 2;
 }
 
 void DelimiterLines(int r, int columns, int lines[])
@@ -413,68 +567,23 @@ void DownLines(int columns, int lines[])
     }
 }
 
-void TableHeaders()
+int NextTablePage(int center_table, int position_y, int lines[])
 {
-    // TODO: Document TableHeaders
-    strcpy(data_table[0][0], "CEDULA");
-    strcpy(data_table[0][1], "NOMBRE");
-    strcpy(data_table[0][2], "TELEFONO");
-    strcpy(data_table[0][3], "SEXO M/F");
+    int c;
+
+    system("cls");
+    PrintTitle("   WUNIVERSIDAD POPULAR DEL CESAR   ", 4);
+    CenterPrint("TABLA DE USUARIOS REGISTRADOS", 6);
+    gotoxy(center_table, position_y);
+    DelimiterLines(0, keys, lines);
+    gotoxy(center_table, position_y + 1);
+    std::cout << char(179);
+    for (c = 0; c < keys; c++)
+        PromptTableElement(0, c, lines);
+    return 0;
 }
 
-int CountElements()
-{
-    // TODO: Document CountElements
-    file_hand.open(results_path.c_str(), ios ::in);
-
-    int rows = 1;
-    while (!file_hand.eof())
-    {
-        file_hand.read((char *)&Employee, sizeof(Data));
-
-        strcpy(data_table[rows][0], Employee.id_document);
-        strcpy(data_table[rows][1], Employee.name);
-        strcpy(data_table[rows][2], Employee.phone_number);
-        strcpy(data_table[rows][3], Employee.genre);
-        rows++;
-    }
-    file_hand.close();
-    return rows - 1;
-}
-
-void DataTable(int rows, int position_y)
-{
-    // TODO: Document DataTable
-    int r, c;
-    int a, l, lines[50];
-    int i, blanks;
-    int center_table;
-
-    LargestInColumn(lines, keys, rows);
-    center_table = AlingTable(lines);
-
-    for (r = 0, a = 0; r < rows; r++, a += 2)
-    {
-        gotoxy(center_table, position_y + a);
-        DelimiterLines(r, keys, lines);
-
-        gotoxy(center_table, position_y + 1 + a);
-        std::cout << char(179);
-        for (c = 0; c < keys; c++)
-        {
-            std::cout << data_table[r][c];
-            blanks = lines[c] - strlen(data_table[r][c]);
-            for (i = 0; i < blanks; i++)
-                std::cout << " ";
-            std::cout << char(179);
-        }
-
-        gotoxy(center_table, position_y + 2 + a);
-        DownLines(keys, lines);
-    }
-}
-
-/* ============================= Menu's actions ================================ */
+/* ============================= Search user functions ================================ */
 void AskUserId()
 {
     char search_id[20], user_info[4][100];
@@ -485,25 +594,22 @@ void AskUserId()
 
     subsection = center * 1.13;
 
-    gotoxy(subsection, 8);
+    gotoxy(subsection, 9);
     std::cout << "CEDULA   : ";
-    AskData(search_id, 'n', 8);
+    AskData(search_id, 'n', 9);
     if (SearchById(search_id, user_info))
     {
         PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
         CenterPrint("USUARIO ENCONTRADO", 7);
     }
     else
-        CenterPrint("Usuario no encontrado", 13);
+        CenterPrint("Usuario no encontrado", 12);
     CenterPrint("Presione cualquier tecla para volver... ", 18);
     getch();
 }
 
 int SearchById(char user_id[], char data_found[][100])
 {
-    std::string data_context[4];
-    int r, k;
-
     file_hand.open(results_path.c_str(), ios::in);
     while (!file_hand.eof())
     {
@@ -511,12 +617,7 @@ int SearchById(char user_id[], char data_found[][100])
         if (strcmp(user_id, Employee.id_document) == 0)
         {
             system("cls");
-
-            data_context[0] = "CEDULA   : " + std::string(Employee.id_document);
-            data_context[1] = "NOMBRE   : " + std::string(Employee.name);
-            data_context[2] = "TELEFONO : " + std::string(Employee.phone_number);
-            data_context[3] = "SEXO M/F : " + std::string(Employee.genre);
-            BoxIn(data_context, keys, 9);
+            UserInfoCard();
             file_hand.close();
             return 1;
         }
@@ -545,7 +646,7 @@ void SetWindow()
     ret = GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
     if (ret)
         width = csbi.dwSize.X;
-    // SetConsoleTitle("UPC DATOS");
+    // SetConsoleTitle("TITULO DE EJEMPLO");
 }
 
 void gotoxy(SHORT x, SHORT y)
@@ -590,6 +691,21 @@ void CenterPrint(std::string text, int position_y)
     int position_x = CenterThis(text);
     gotoxy(position_x, position_y);
     std::cout << text;
+}
+
+void Capitalize(char text[])
+{
+    int i;
+    std::string to_capitalize = std::string(text);
+
+    to_capitalize[0] = toupper(to_capitalize[0]);
+    for (i = 1; i < strlen(text); i++)
+    {
+        to_capitalize[i] = tolower(to_capitalize[i]);
+        if (to_capitalize[i - 1] == ' ')
+            to_capitalize[i] = toupper(to_capitalize[i]);
+    }
+    strcpy(text, to_capitalize.c_str());
 }
 
 void PrintTitle(std::string title, int height)
@@ -653,7 +769,7 @@ void BoxIn(std::string options[], int options_quantity, int height)
     */
 
     int i, longest = LongestWord(options, options_quantity);
-    center = (width - (longest+4))/2;
+    center = (width - (longest + 4)) / 2;
 
     gotoxy(center, height - 1);
     std::cout << char(218);
