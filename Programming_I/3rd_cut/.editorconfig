@@ -1,0 +1,16 @@
+[*]
+indent_style = space
+
+[*.{js,ts,json}]
+indent_size = 2
+
+[*.python]
+indent_style = space
+indent_size = 4
+
+[*.go]
+indent_style = tab
+
+[*.{c,cpp,h,hh,hpp}]
+indent_style = space
+indent_size = 4
