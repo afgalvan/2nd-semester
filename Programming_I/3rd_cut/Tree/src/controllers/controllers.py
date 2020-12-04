@@ -9,6 +9,7 @@ program without much effort.
 
 
 from subprocess import call
+from sys import stdout
 from platform import system
 from shutil import get_terminal_size
 
@@ -81,7 +82,7 @@ def center_this(text: str):
                       Lorem ipsum
     ├──────────────┼───────────────────────┤
                      15
-                        
+
     """
     center_position = (width - len(text))//2
     return center_position
@@ -101,7 +102,7 @@ def center_print(text: str, *args):
 
     x = center_this(text)
     gotoxy(x+width_alter, y)
-    print(text, end="")
+    stdout.write(text)
 
 
 def error_print(error_msg: str, position="m", *args):

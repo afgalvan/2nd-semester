@@ -12,7 +12,7 @@ def main():
     center_print("CALCULAR EL TIEMPO DE ESCRITURA.", 10)
     center_print("Escribe tu nombre: ", 13)
     print()
-
+    
     if OS == "Windows":
         first = getche().decode("utf-8")
     else:
