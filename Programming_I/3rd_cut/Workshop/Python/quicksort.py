@@ -1,7 +1,7 @@
 from time import time
 from random import randint
+from controllers.controllers import *
 
-array = [randint(1, 1000) for i in range(1, 1000)]
 
 def partition(array: list(), limit: int, init: int):
     i = init - 1
@@ -16,37 +16,26 @@ def partition(array: list(), limit: int, init: int):
     return i + 1
 
 
-def quickSort(array: list(), limit: int, init=0):
+def quick_sort(array: list(), limit: int, init=0):
     if init < limit:
         part_index = partition(array, limit, init)
 
-        quickSort(array, part_index - 1, init)
-        quickSort(array, limit, part_index + 1)
+        quick_sort(array, part_index - 1, init)
+        quick_sort(array, limit, part_index + 1)
 
-def count_elapsed_time(f):
-    """
-    Decorator.
-    Execute the function and calculate the elapsed time.
-    Print the result to the standard output.
-    """
-    def wrapper():
-        # Start counting.
-        start_time = time()
-        # Take the original function's return value.
-        ret = f()
-        # Calculate the elapsed time.
-        elapsed_time = time() - start_time
-        print("Elapsed time: %0.10f seconds." % elapsed_time)
-        return ret
+
+def main():
+    clear()
+    array = [randint(1, 1000) for n in range(1, 20)]
+    size = len(array)
     
-    return wrapper
+    # center_print("Unsorted array", 5)
+    # array_table(array, 6) # <== Función array_table para
+    #                           # imprimir cualquier arreglo
 
+    center_print("Quicksorted array", 10)
+    quick_sort(array, size - 1)
+    array_table(array, 11) # <== Es la misma función
+    print()
 
-@count_elapsed_time
-def prompt():
-    global array
-    n = len(array)
-    quickSort(array, n - 1)
-    print(array)
-    
-prompt()
+main()
