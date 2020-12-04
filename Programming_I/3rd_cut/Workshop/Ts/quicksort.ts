@@ -11,7 +11,7 @@ function main(): number {
   beauty.centerPrint("Quicksorted array", 10);
   quicksort(array, 0, arraySize - 1);
   beauty.arrayTable(array, 11);
-
+  console.log("\n");
   return 0;
 }
 
@@ -34,9 +34,9 @@ function arrayPartition(
     }
   }
 
-  swap = array[i];
-  array[i] = array[j];
-  array[j] = swap;
+  swap = array[i + 1];
+  array[i + 1] = array[limit];
+  array[limit] = swap;
   return i + 1;
 }
 

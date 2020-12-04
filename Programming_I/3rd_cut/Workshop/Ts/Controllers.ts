@@ -44,8 +44,7 @@ function arrayTable(array: Array<number>, height: number): void {
   goToxy(centerX, height);
   process.stdout.write("┌");
   for (i = 0; i < size; i++) {
-    for (j = 0; j < digitsOf(array[i]); j++)
-      process.stdout.write("─");
+    for (j = 0; j < digitsOf(array[i]); j++) process.stdout.write("─");
     if (i + 1 < size) process.stdout.write("┬");
   }
   process.stdout.write("┐");
@@ -57,15 +56,13 @@ function arrayTable(array: Array<number>, height: number): void {
     process.stdout.write("│");
   });
 
-  goToxy(centerX, height+2);
+  goToxy(centerX, height + 2);
   process.stdout.write("└");
   for (i = 0; i < size; i++) {
-    for (j = 0; j < digitsOf(array[i]); j++)
-      process.stdout.write("─");
+    for (j = 0; j < digitsOf(array[i]); j++) process.stdout.write("─");
     if (i + 1 < size) process.stdout.write("┴");
   }
   process.stdout.write("┘");
-
 }
 
 export { centerThis, goToxy, centerPrint, digitsOf, arrayTable };
