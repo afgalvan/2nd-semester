@@ -1,0 +1,15 @@
+{
+  "name": "3rd_cut",
+  "version": "1.0.0",
+  "description": "2020 II 3rd cut activities in different programming languages",
+  "main": "Workshop/Ts/index.ts",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^14.14.10",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "eslint": "^7.14.0"
+  },
+  "author": "Andres Galvan",
+  "license": "GPL-3.0-or-later"
+}
