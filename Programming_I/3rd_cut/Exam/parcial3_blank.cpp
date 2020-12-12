@@ -7,9 +7,7 @@
 */
 
 #include <iostream>
-#include <string>
 #include <fstream>
-#include <sstream>
 /* Librerías exclusivas de Windows OS. */
 #include <conio.h>
 #include <windows.h>
@@ -48,8 +46,11 @@ void DelimiterLines(int r, int columns, int lines[]);
 void DownLines(int columns, int lines[]);
 int NextTablePage(int center_table, int position_y, int lines[]);
 // Search user functions
-void AskUserId();
+void UserFinder();
+void AskUserId(char user_id[]);
 int SearchById(char user_id[]);
+// Filter table result by a value
+void TableFilter();
 // Remove user functions
 void DeleteUser();
 // Controllers
@@ -63,19 +64,22 @@ int LongestWord(std::string words[], int len);
 void BoxIn(std::string options[], int options_quantity, int height);
 int PageMove(int index);
 
-// TODO: Make search engine reusable
-// TODO: Delete register function
-// Contexto importante de la ventana de la terminal.
+// TODO: $Delete register function
+// TODO: $Filter Table by genre function
+// Información importante de la ventana de la terminal.
 int width, center, s_screen = 1, subsection;
-int keys = 4;
-char data_table[50][4][100];
-std::string results_path = "parcial_galvan\\datos.txt";
+// Información de la tabla
+int keys = 4;                // FIXME 4 -> Desired value
+char data_table[50][4][100]; //
+// Dirección de nuestro archivo
+std::string results_path = "D:\\DATOSBAS\\parcial_galvan\\datos.txt";
 
 std::fstream file_hand;
 using std::ios;
 
 struct Data
 {
+    // FIXME Elements name and quantity
     char id_document[20];
     char name[60];
     char phone_number[20];
@@ -166,7 +170,10 @@ void ChoiceManagement(char process)
         DisplayStruct(rows);
         break;
     case '4':
-        AskUserId();
+        UserFinder();
+        break;
+    case '5':
+        DeleteUser();
         break;
     }
 }
@@ -174,7 +181,11 @@ void ChoiceManagement(char process)
 /* ============================= User's actions ================================ */
 void FillData()
 {
-    // TODO: Document FillData function
+    /* Preguntarle al usuario los datos requeridos para llenar el
+     * registro, y hacer las respectivas validaciones para evitar
+     * errores de lectura al mostrar la tabla
+    */
+
     char register_again;
 
     UserForm();
@@ -183,6 +194,8 @@ void FillData()
     Capitalize(Employee.name);
     gotoxy(subsection + 12, 10);
     std::cout << Employee.name;
+    /*FIXME Change users questions quantity*/
+    /*==/==/==/==/==*/
     AskData(Employee.phone_number, 'n', 12);
 
     CenterPrint("F-> Femenino  y  M-> Masculino", 17);
@@ -194,6 +207,7 @@ void FillData()
     Capitalize(Employee.genre);
     gotoxy(subsection + 12, 14);
     std::cout << Employee.genre;
+    /*==/==/==/==/==*/
 
     FileAccess(); // Verificar que el archivo exista
     file_hand.open(results_path.c_str(), ios::app);
@@ -207,6 +221,7 @@ void FillData()
 
 void UserForm()
 {
+    // TODO Document UserForm
     system("cls");
     PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
     CenterPrint("REGISTRAR EMPLEADOS", 6);
@@ -217,13 +232,17 @@ void UserForm()
     gotoxy(subsection, 10);
     std::cout << "NOMBRE    : ";
     gotoxy(subsection, 12);
+    /*FIXME Question context quantity*/
+    /*==/==/==/==/==*/
     std::cout << "TELEFONO  : ";
     gotoxy(subsection, 14);
     std::cout << "SEXO M/F  : ";
+    /*==/==/==/==/==*/
 }
 
 char KeepDoing(int line)
 {
+    // TODO Document KeepDoing
     char user_choice;
 
     CenterPrint("CONTINUAR? S/N : ", line);
@@ -261,8 +280,11 @@ void AskData(char user_input[], char data_type, int line)
 /* ============================= Validations ================================ */
 bool IsValidType(char input[], char type)
 {
-    // TODO: IsValidType Documentation
-    // Check if a content is numeric or alphabetic.
+    /* Verificar que una cadena es compatible para hacer parsing
+     * a otro tipo de dato, en este caso, numerico, también validar
+     * que las entradas alfabéticas no contengan valores númericos.
+    */
+
     int i;
 
     for (i = 0; i < strlen(input); i++)
@@ -288,7 +310,10 @@ bool IsAllowedInput(std::string allowed, char user_input[])
 
 void MenuChoice(char choice[], int position_y, std::string allow_this)
 {
-    // TODO: Menu choice Documentation
+    /* Pequeño manejador de entradas para controlar el flujo usal de
+     * opciones que un usuario realiza, acompañado de un indicador de entrada.
+    */
+
     int position_x = center;
 
     gotoxy(position_x, position_y + 2);
@@ -309,17 +334,26 @@ void MenuChoice(char choice[], int position_y, std::string allow_this)
 /* ============================= Files manipulations ================================ */
 void FileAccess()
 {
-    // TODO: Document FileAccess
+    /* Antes de abrir y leer archivos, es necesario que se verifique
+     * el estado de el mismo. Esta función checa que un archivo x exista
+     * en determinada dirección, si no existe crea las carpetas necesarias
+     * (si es que se ingresa una carpeta) y finalmente el archivo.
+    */
+
     std::string file, folder_path;
-    std::string mkdir = "mkdir ";
+    std::string mkdir = "mkdir "; // Comando mkdir para crear directorios desde la terminal
 
-    folder_path = SplitPath(results_path, file);
-    mkdir += folder_path;
+    folder_path = SplitPath(results_path, file); // Dividimos las carpetas del fichero de texto
+    mkdir += folder_path;                        // Se agrega la cantidad de carpetas a crear
 
-    file_hand.open(results_path.c_str(), ios::app);
+    file_hand.open(results_path.c_str(), ios::app); // Tratar de abrir el archivo
+    // Si no existe lo crea
     if (file_hand.fail())
     {
+        // Ejecutar comando mkdir para crear las carpetas
         system(mkdir.c_str());
+
+        // Crear el fichero de texto en la dirección indicada
         file_hand.open(results_path.c_str(), ios::out);
     }
     file_hand.close();
@@ -327,16 +361,20 @@ void FileAccess()
 
 std::string SplitPath(std::string folder_path, std::string file)
 {
-    // TODO: Document SplitPath
+    // Dividir una dirección de manera que separemos las carpetas del fichero de texto
     int i;
-    int len = folder_path.length() - 1;
+    int len = folder_path.length() - 1; // El tamaño del string - 1 es la última posición
 
+    /* Recorrera string de manera inversa hasta
+     * que encontremos un "\" */
     for (i = len; folder_path[i] != '\\'; i--)
-        file += folder_path[i];
+        file += folder_path[i]; // Agregar los caracteres que componen el nombre del fichero.
 
-    file = std::string(file.rbegin(), file.rend());
-    folder_path.replace(i, file.length() + 1, "");
+    file = std::string(file.rbegin(), file.rend()); // Invertirlo, ya que al acumularlo,
+                                                    // lo recibimos de manera inversa.
 
+    folder_path.replace(i, file.length() + 1, ""); // Remover el fichero de texto de la dirección
+                                                   // para crear esas carpetas.
     return folder_path;
 }
 
@@ -361,7 +399,7 @@ int IsDatabaseEmpty()
 
 int UpdateTable()
 {
-    // TODO: Document CountElements
+    // TODO: Document UpdateTable
     file_hand.open(results_path.c_str(), ios ::in);
 
     int rows = 1;
@@ -371,8 +409,11 @@ int UpdateTable()
 
         strcpy(data_table[rows][0], Employee.id_document);
         strcpy(data_table[rows][1], Employee.name);
+        /*FIXME Table filling quantity */
+        /*==/==/==/==/==*/
         strcpy(data_table[rows][2], Employee.phone_number);
         strcpy(data_table[rows][3], Employee.genre);
+        /*==/==/==/==/==*/
         rows++;
     }
     file_hand.close();
@@ -382,6 +423,7 @@ int UpdateTable()
 /* ============================= Show one user at time ================================ */
 void DisplayEachUser(int rows)
 {
+    // TODO Document DisplayEachUser
     char choice;
     int page = 1;
 
@@ -407,21 +449,28 @@ void DisplayEachUser(int rows)
 
 void UserInfoCard()
 {
+    // TODO *Document UserInfoCard
     std::string data_context[7];
+    int len;
 
     data_context[0] = "CEDULA   : " + std::string(Employee.id_document);
     data_context[1] = " ";
     data_context[2] = "NOMBRE   : " + std::string(Employee.name);
+    /*FIXME Comment for the quantities*/
+    /*==/==/==/==/==*/
     data_context[3] = " ";
     data_context[4] = "TELEFONO : " + std::string(Employee.phone_number);
     data_context[5] = " ";
     data_context[6] = "SEXO M/F : " + std::string(Employee.genre);
+    /*==/==/==/==/==*/
+    len = sizeof(data_context) / sizeof(*data_context);
 
-    BoxIn(data_context, 7, 9);
+    BoxIn(data_context, len, 9); // <- 7 to desired value + 3
 }
 
 void Pagination(int current, int total, int line)
 {
+    // TODO Document Pagination
     char buffer_1[20], buffer_2[20];
     char *temp_1 = itoa(current, buffer_1, 10);
     char *temp_2 = itoa(total, buffer_2, 10);
@@ -434,7 +483,10 @@ void Pagination(int current, int total, int line)
 /* ============================= Table prompt functions ================================ */
 void TableHeaders()
 {
-    // TODO: Document TableHeaders
+    /* Llenar primera fila de cada columna con las cabeceras
+     * que indican que dato se está mostrando con relación a
+     * lo que se preguntó primeramente.
+    */
     strcpy(data_table[0][0], "CEDULA");
     strcpy(data_table[0][1], "NOMBRE");
     strcpy(data_table[0][2], "TELEFONO");
@@ -443,6 +495,7 @@ void TableHeaders()
 
 void DisplayStruct(int rows)
 {
+    // TODO: Document DisplayStruct
     system("cls");
     PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
     CenterPrint("TABLA DE USUARIOS REGISTRADOS", 6);
@@ -454,7 +507,7 @@ void DisplayStruct(int rows)
 
 void DataTable(int rows, int position_y)
 {
-    // TODO: Document DataTable
+    // TODO: *Document DataTable
     int r, c;
     int current_line, lines[50];
     int center_table, page = 1, total_pages = ((rows - 2) / 6) + 1;
@@ -515,6 +568,7 @@ void DataTable(int rows, int position_y)
 
 void PromptTableElement(int row, int column, int lines[])
 {
+    // Mostrar el contenido de cada celda
     int i, blanks;
 
     std::cout << data_table[row][column];
@@ -526,7 +580,11 @@ void PromptTableElement(int row, int column, int lines[])
 
 void LargestInColumn(int list[], int columns, int rows)
 {
-    // TODO: Document LargestInColumn
+    /* Revisar cada columna y encontrar la palabra más larga
+     * para así llenar una lista con el ancho que deberá tener
+     * cada columna de la tabla y tener una tabla uniforme.
+    */
+
     int i, j;
     int max;
 
@@ -543,7 +601,11 @@ void LargestInColumn(int list[], int columns, int rows)
 
 int AlingTable(int all_characters[])
 {
-    // TODO: Document AlingTable
+    /* Tomando la palabra más larga en la columna, esta función
+     * devuelve la posición  en el eje x más centrada posible
+     * para mostrar la tabla.
+    */
+
     int table_width, i, total_chars = 0;
 
     for (i = 0; i < keys; i++)
@@ -555,7 +617,10 @@ int AlingTable(int all_characters[])
 
 void DelimiterLines(int r, int columns, int lines[])
 {
-    // TODO: Document DelimiterLines
+    /* Teniendo en cuenta el tamaño de la palabra de mayor carácter
+     * esta función imprime las líneas que separarán a cada palabra.
+    */
+
     int c;
     int l;
 
@@ -582,7 +647,8 @@ void DelimiterLines(int r, int columns, int lines[])
 
 void DownLines(int columns, int lines[])
 {
-    // TODO: Document Downlines
+    // Esta función muestra en pantalla las líneas inferiores de la tabla
+
     int c, l;
 
     std::cout << char(192);
@@ -599,6 +665,7 @@ void DownLines(int columns, int lines[])
 
 int NextTablePage(int center_table, int position_y, int lines[])
 {
+    // TODO Document NextTablePage
     int c;
 
     system("cls");
@@ -614,9 +681,31 @@ int NextTablePage(int center_table, int position_y, int lines[])
 }
 
 /* ============================= Search user functions ================================ */
-void AskUserId()
+void UserFinder()
 {
-    char search_id[20];
+    // TODO Document UserFinder
+
+    char search_again, search_id[20];
+    std::string subtitle = "USUARIO ENCONTRADO";
+
+    AskUserId(search_id);
+    if (SearchById(search_id))
+    {
+        system("cls");
+        PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
+        CenterPrint(subtitle, 7);
+        UserInfoCard();
+
+        file_hand.close();
+    }
+    search_again = KeepDoing(20);
+    if (search_again == 's')
+        UserFinder();
+}
+
+void AskUserId(char search_id[])
+{
+    // TODO Document AskUserId
 
     system("cls");
     PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
@@ -627,33 +716,33 @@ void AskUserId()
     gotoxy(subsection, 9);
     std::cout << "CEDULA   : ";
     AskData(search_id, 'n', 9);
-    if (SearchById(search_id))
-    {
-        PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
-        CenterPrint("USUARIO ENCONTRADO", 7);
-    }
-    else
-        CenterPrint("Usuario no encontrado", 12);
-    CenterPrint("Presione cualquier tecla para volver... ", 18);
-    getch();
 }
 
 int SearchById(char user_id[])
 {
+    // TODO Document SearchById
+
     file_hand.open(results_path.c_str(), ios::in);
     while (!file_hand.eof())
     {
         file_hand.read((char *)&Employee, sizeof(Data));
         if (strcmp(user_id, Employee.id_document) == 0)
-        {
-            system("cls");
-            UserInfoCard();
-            file_hand.close();
             return 1;
-        }
     }
     file_hand.close();
+    CenterPrint("Usuario no encontrado", 12);
     return 0;
+}
+
+/* ============================= Remove user functions ================================ */
+
+void DeleteUser()
+{
+    char search_id[20];
+}
+
+int Deleter()
+{
 }
 
 /* ============================= Controllers ================================ */
