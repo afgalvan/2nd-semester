@@ -28,14 +28,15 @@ def main():
     clear()
     array = [randint(1, 1000) for n in range(1, 20)]
     size = len(array)
-    
+
     # center_print("Unsorted array", 5)
     # array_table(array, 6) # <== Función array_table para
     #                           # imprimir cualquier arreglo
 
     center_print("Quicksorted array", 10)
     quick_sort(array, size - 1)
-    array_table(array, 11) # <== Es la misma función
+    array_table(array, 11)  # <== Es la misma función
     print()
+
 
 main()
