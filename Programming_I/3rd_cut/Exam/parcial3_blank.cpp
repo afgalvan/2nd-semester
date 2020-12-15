@@ -38,7 +38,7 @@ void Pagination(int current, int total, int line);
 // Table prompt functions
 void TableHeaders();
 void DisplayStruct(int rows);
-void DataTable(int rows, int position_y);
+void DataTable(int rows, int position_y, std::string filter);
 void PromptTableElement(int row, int column, int lines[]);
 void LargestInColumn(int list[], int columns, int rows);
 int AlingTable(int all_characters[]);
@@ -48,11 +48,9 @@ int NextTablePage(int center_table, int position_y, int lines[]);
 // Search user functions
 void UserFinder();
 void AskUserId(char user_id[]);
-int SearchById(char user_id[]);
+int WasUserFound(char user_id[]);
 // Filter table result by a value
-void TableFilter();
-// Remove user functions
-void DeleteUser();
+void TableFilter(int rows);
 // Controllers
 void SetWindow();
 void gotoxy(SHORT x, SHORT y);
@@ -64,8 +62,6 @@ int LongestWord(std::string words[], int len);
 void BoxIn(std::string options[], int options_quantity, int height);
 int PageMove(int index);
 
-// TODO: $Delete register function
-// TODO: $Filter Table by genre function
 // Información importante de la ventana de la terminal.
 int width, center, s_screen = 1, subsection;
 // Información de la tabla
@@ -124,7 +120,7 @@ void Menu()
 
     std::string menu_options[] = {"1 - INGRESAR DATOS", "2 - CONSULTAR REGISTROS",
                                   "3 - CONSULTAR TABLA DE DATOS", "4 - BUSCAR UN DATO",
-                                  "5 - ELIMINAR UN REGISTRO", " ", "6 - SALIR"};
+                                  "5 - FILTRAR TABLA", " ", "6 - SALIR"};
 
     char choice[50];
     int len = sizeof(menu_options) / sizeof(*menu_options); // Obtener el tamaño de un arreglo
@@ -173,7 +169,7 @@ void ChoiceManagement(char process)
         UserFinder();
         break;
     case '5':
-        DeleteUser();
+        TableFilter(rows);
         break;
     }
 }
@@ -380,7 +376,7 @@ std::string SplitPath(std::string folder_path, std::string file)
 
 int IsDatabaseEmpty()
 {
-    // TODO: Document IsDatabaseEmpty
+    // TODO Document IsDatabaseEmpty
 
     int lines = -1;
 
@@ -399,7 +395,7 @@ int IsDatabaseEmpty()
 
 int UpdateTable()
 {
-    // TODO: Document UpdateTable
+    // TODO Document UpdateTable
     file_hand.open(results_path.c_str(), ios ::in);
 
     int rows = 1;
@@ -495,19 +491,20 @@ void TableHeaders()
 
 void DisplayStruct(int rows)
 {
-    // TODO: Document DisplayStruct
+    // TODO Document DisplayStruct
     system("cls");
     PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
     CenterPrint("TABLA DE USUARIOS REGISTRADOS", 6);
-    DataTable(rows, 8);
+    DataTable(rows, 8, "*");
     CenterPrint("                            ", 26);
     CenterPrint("Presione cualquier tecla para volver... ", 25);
     getch();
 }
 
-void DataTable(int rows, int position_y)
+void DataTable(int rows, int position_y, std::string filter)
 {
-    // TODO: *Document DataTable
+    // TODO *Document DataTable
+    char to_find[60];
     int r, c;
     int current_line, lines[50];
     int center_table, page = 1, total_pages = ((rows - 2) / 6) + 1;
@@ -518,6 +515,14 @@ void DataTable(int rows, int position_y)
 
     for (r = 0, current_line = 0; r < rows; r++, current_line += 2)
     {
+        strcpy(to_find, data_table[r][1]); // FIXME Change for the value to find
+        if (!strcmp(filter.c_str(), "*"))
+            ;
+        else if (strcmp(strlwr(to_find), filter.c_str()) && r != 0)
+        {
+            current_line -= 2;
+            continue;
+        }
         gotoxy(center_table, position_y + current_line);
         DelimiterLines(r, keys, lines);
 
@@ -528,7 +533,8 @@ void DataTable(int rows, int position_y)
 
         gotoxy(center_table, position_y + 2 + current_line);
         DownLines(keys, lines);
-        Pagination(page, total_pages, 23);
+        if (!strcmp(filter.c_str(), "*"))
+            Pagination(page, total_pages, 23);
         rows_showing++;
 
         if (position_y + current_line > 19 && r + 1 != rows)
@@ -686,14 +692,13 @@ void UserFinder()
     // TODO Document UserFinder
 
     char search_again, search_id[20];
-    std::string subtitle = "USUARIO ENCONTRADO";
 
     AskUserId(search_id);
-    if (SearchById(search_id))
+    if (WasUserFound(search_id))
     {
         system("cls");
         PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
-        CenterPrint(subtitle, 7);
+        CenterPrint("USUARIO ENCONTRADO", 7);
         UserInfoCard();
 
         file_hand.close();
@@ -718,9 +723,9 @@ void AskUserId(char search_id[])
     AskData(search_id, 'n', 9);
 }
 
-int SearchById(char user_id[])
+int WasUserFound(char user_id[])
 {
-    // TODO Document SearchById
+    // TODO Document WasUserFound
 
     file_hand.open(results_path.c_str(), ios::in);
     while (!file_hand.eof())
@@ -734,15 +739,26 @@ int SearchById(char user_id[])
     return 0;
 }
 
-/* ============================= Remove user functions ================================ */
-
-void DeleteUser()
+/* ============================= Filter users functions ================================ */
+void TableFilter(int rows)
 {
-    char search_id[20];
-}
+    // TODO
 
-int Deleter()
-{
+    char name[60];
+
+    system("cls");
+    PrintTitle("   UNIVERSIDAD POPULAR DEL CESAR   ", 4);
+    CenterPrint("FILTRAR TABLA DE USUARIOS", 6);
+
+    subsection = center * 1.13;
+    gotoxy(subsection, 9);
+    std::cout << "NOMBRE   : ";
+    AskData(name, 'a', 9);
+    DataTable(rows, 8, strlwr(name));
+    CenterPrint("                            ", 26);
+
+    if (KeepDoing(20) == 's')
+        TableFilter(rows);
 }
 
 /* ============================= Controllers ================================ */
@@ -814,6 +830,9 @@ void CenterPrint(std::string text, int position_y)
 
 void Capitalize(char text[])
 {
+    // Convierte un texto sin importar su case a Camel case
+    // Ejemplo: hola -> Hola, ANDRÉS FELIPE -> Andrés Felipe
+
     int i;
     std::string to_capitalize = std::string(text);
 
