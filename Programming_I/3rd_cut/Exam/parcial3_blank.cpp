@@ -119,8 +119,8 @@ void Menu()
     */
 
     std::string menu_options[] = {"1 - INGRESAR DATOS", "2 - CONSULTAR REGISTROS",
-                                  "3 - CONSULTAR TABLA DE DATOS", "4 - BUSCAR UN DATO",
-                                  "5 - FILTRAR TABLA", " ", "6 - SALIR"};
+                                  "3 - CONSULTA TIPO LISTADO", "4 - CONSULTA SELECTIVA",
+                                  "5 - FILTAR LISTA", " ", "6 - SALIR"};
 
     char choice[50];
     int len = sizeof(menu_options) / sizeof(*menu_options); // Obtener el tamaño de un arreglo
@@ -504,11 +504,13 @@ void DisplayStruct(int rows)
 void DataTable(int rows, int position_y, std::string filter)
 {
     // TODO *Document DataTable
-    char to_find[60];
     int r, c;
     int current_line, lines[50];
     int center_table, page = 1, total_pages = ((rows - 2) / 6) + 1;
     int rows_showing, move;
+
+    char to_find[60];
+    bool filter_mode = true;
 
     LargestInColumn(lines, keys, rows);
     center_table = AlingTable(lines);
@@ -517,7 +519,7 @@ void DataTable(int rows, int position_y, std::string filter)
     {
         strcpy(to_find, data_table[r][1]); // FIXME Change for the value to find
         if (!strcmp(filter.c_str(), "*"))
-            ;
+            filter_mode = false;
         else if (strcmp(strlwr(to_find), filter.c_str()) && r != 0)
         {
             current_line -= 2;
@@ -533,7 +535,7 @@ void DataTable(int rows, int position_y, std::string filter)
 
         gotoxy(center_table, position_y + 2 + current_line);
         DownLines(keys, lines);
-        if (!strcmp(filter.c_str(), "*"))
+        if (!filter_mode)
             Pagination(page, total_pages, 23);
         rows_showing++;
 
@@ -559,7 +561,7 @@ void DataTable(int rows, int position_y, std::string filter)
                 current_line = 0;
             }
         }
-        if (r + 1 == rows && total_pages >= 2)
+        if (r + 1 == rows && total_pages >= 2 && !filter_mode)
         {
             move = PageMove(page);
             if (move == -1)
@@ -742,7 +744,7 @@ int WasUserFound(char user_id[])
 /* ============================= Filter users functions ================================ */
 void TableFilter(int rows)
 {
-    // TODO
+    // TODO Document TableFilter
 
     char name[60];
 
