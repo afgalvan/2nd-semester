@@ -1,1 +1,0 @@
-billetes_50
